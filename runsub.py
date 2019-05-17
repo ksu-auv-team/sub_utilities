@@ -76,10 +76,9 @@ def start():
     global delay_start
     
     #keep logs from each start in a separate directory
-    if not args.no_log:
-        curr_log_dir = '/home/owl/logs/{}'.format(datetime.datetime.now())
-        os.mkdir(curr_log_dir)
-        curr_log_dir += '/'
+    curr_log_dir = '/home/owl/logs/{}'.format(datetime.datetime.now())
+    os.mkdir(curr_log_dir)
+    curr_log_dir += '/'
 
 
     print('starting roscore')
