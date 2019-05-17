@@ -128,7 +128,7 @@ def delay_read(duration):
     return stopped
 
 # hardcoded port number means arduino has to be the second USB device plugged in
-ser = serial.Serial('/dev/ttyACM1', 9600, timeout=.001)
+ser = serial.Serial('arduino_0', 9600, timeout=.001)
 
 #the loop everything runs from
 while True:
