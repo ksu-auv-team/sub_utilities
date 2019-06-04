@@ -35,8 +35,10 @@ Because the movement\_package is inside a catkin\_workspace, we need to initiali
 # Initialize Ros Melodic
 sudo apt update && \
 sudo apt -y install git vim cmake catkin
+```
 
-#Install ROS Melodic
+```bash
+# Install ROS Melodic
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
 sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 && \
 sudo apt update && \
@@ -44,15 +46,22 @@ sudo apt install ros-melodic-desktop-full && \
 sudo rosdep init && \
 rosdep update && \
 echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+```
 
+```bash
+# Install extra packages
 sudo apt -y install ros-melodic-mavlink ros-melodic-mavros ros-melodic-mavros-msgs \
     ros-melodic-cmake-modules ros-melodic-control-toolbox ros-melodic-joy
+```
 
+```bash
+# More Packages
 sudo geographiclib-get-geoids minimal
 ```
 
 Setup catkin\_ws:
 ```bash
+# Setup local repo
 cd path/to/sub-utilities
 git submodule init
 git submodule update
