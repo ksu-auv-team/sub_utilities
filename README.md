@@ -20,9 +20,43 @@ This repo also has nice startup scrips to aid in the useability of the submarine
 
 * `pict.py` will publish camera footage on the `imgs` topic from /dev/video0
 * `vis.py` allows the user to listen on the `imgs` topic and show realtime video feed.
-* `runsub.py` will run the startup process for all of AUV's different nodes including: roscore, movement_package, execute_witState, etc. This is the script you want to run if you are trying to run the full machine. 
+* `runsub.py` will run the startup process for all of AUV's different nodes including: roscore, movement\_package, execute\_witState, etc. This is the script you want to run if you are trying to run the full machine. 
 
 ### Submodules
 Inside the `submodules` directory is where all the submodules of this repo live. Most of these are also required for making the sub work properly and you should checkout their README's to get a better understanding of what they all do.   
 
-If you push a commit to a submodule, it will not ***Automatically*** show up here. You need to go into the `submodules/<your-updated-submodule>` directory, do a `git fetch`, then checkout the commit that you want. When you then return to the base `sub-utilities` directory, and do a `git status`, you should see it showing that you updated a submodule. You can then `git add` and `git commit` that like normal and it will update the `sub-utilities` repo.  
+If you push a commit to a submodule, it will not ***Automatically*** show up here. You need to go into the `submodules/<your-updated-submodule>` directory, do a `git fetch`, then checkout the commit that you want. When you then return to the base `sub-utilities` directory, and do a `git status`, you should see it showing that you updated a submodule. You can then `git add` and `git commit` that like normal and it will update the `sub-utilities` repo. 
+
+
+### movement\_package
+Because the movement\_package is inside a catkin\_workspace, we need to initialize it a little bit differently than the others. Just run these commands:
+
+```bash
+# Initialize Ros Melodic
+sudo apt update && \
+sudo apt -y install git vim cmake catkin
+
+#Install ROS Melodic
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 && \
+sudo apt update && \
+sudo apt install ros-melodic-desktop-full && \
+sudo rosdep init && \
+rosdep update && \
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+
+sudo apt -y install ros-melodic-mavlink ros-melodic-mavros ros-melodic-mavros-msgs \
+    ros-melodic-cmake-modules ros-melodic-control-toolbox ros-melodic-joy
+
+sudo geographiclib-get-geoids minimal
+```
+
+Setup catkin\_ws:
+```bash
+cd path/to/sub-utilities
+git submodule init
+git submodule update
+cd catkin_ws/src
+catkin_init_workspace
+catkin_make -j $(nproc) -C ..
+``` 
