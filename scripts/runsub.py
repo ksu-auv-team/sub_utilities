@@ -20,6 +20,7 @@ parser.add_argument('-n', '--network-model', default="ssd_mobilenet_v1_coco", he
 parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
 parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
 parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
+parser.add_argument('--debug-execute', action='store_true', help='Will run execute with the debug flag')
 args = parser.parse_args()
 
 # future subprocesses
@@ -81,7 +82,7 @@ def start():
     curr_log_dir = script_directory + '../logs/{}/'.format(datetime.datetime.now())
     os.mkdir(curr_log_dir)
 
-    if(args.no_arduino):
+    if(args.no_arduino): # Run the programs without starting up the arduino
         print('starting roscore')
         with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
             rc = subprocess.Popen(['roscore'], stdout=rcout, stderr=rcout)
@@ -95,13 +96,16 @@ def start():
 
         print('starting movement_package')
         with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
-            mv = subprocess.Popen(['roslaunch', 'movement_package', 'manualmode.launch'], stdout=mvout, stderr=mvout)    
+            mv = subprocess.Popen(['roslaunch', '../catkin_workspace/src/movement_package/launch/manualmode.launch'], stdout=mvout, stderr=mvout)    
         curr_children.append(mv)
 
         if not args.manual:
             print('starting execute')
             with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
-                ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine ' + args.state_machine], stdout=executeout, stderr=executeout)
+                if(args.debug_execute):
+                    ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine', args.state_machine, '--debug'], stdout=executeout, stderr=executeout)
+                else:
+                    ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine', args.state_machine], stdout=executeout, stderr=executeout)
             curr_children.append(ex)
             print('exiting start')
 
@@ -121,14 +125,17 @@ def start():
 
             print('starting movement_package')
             with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
-                mv = subprocess.Popen(['roslaunch', 'movement_package', 'manualmode.launch'], stdout=mvout, stderr=mvout)    
+                mv = subprocess.Popen(['roslaunch', '../catkin_workspace/src/movement_package/launch/manualmode.launch'], stdout=mvout, stderr=mvout)    
             curr_children.append(mv)
             delay_start = time.time()
         if not args.manual:    
             if not delay_read(30): #delay to give the pixhawk time to start
                 print('starting execute')
                 with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
-                    ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine ' + args.state_machine], stdout=executeout, stderr=executeout)
+                    if(args.debug_execute):
+                        ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine', args.state_machine, '--debug'], stdout=executeout, stderr=executeout)
+                    else:
+                        ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine', args.state_machine], stdout=executeout, stderr=executeout)
                 curr_children.append(ex)
                 print('exiting start')
 
