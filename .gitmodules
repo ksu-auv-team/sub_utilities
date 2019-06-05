@@ -7,9 +7,6 @@
 [submodule "submodules/ncs-ros"]
 	path = submodules/ncs-ros
 	url = https://github.com/ksu-auv-team/ncs-ros.git
-[submodule "submodules/movement_package"]
-	path = submodules/movement_package
-	url = https://github.com/ksu-auv-team/movement_package.git
 [submodule "catkin_ws/src/movement_package"]
 	path = catkin_ws/src/movement_package
 	url = https://github.com/ksu-auv-team/movement_package.git
