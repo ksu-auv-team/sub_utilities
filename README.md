@@ -34,7 +34,8 @@ Because the movement\_package is inside a catkin\_workspace, we need to initiali
 ```bash
 # Initialize Ros Melodic
 sudo apt update && \
-sudo apt -y install git vim cmake catkin python-catkin-pkg-modules
+sudo apt -y install git vim cmake catkin python-catkin-pkg-modules && \
+source /opt/ros/melodic/setup.bash
 ```
 
 ```bash
