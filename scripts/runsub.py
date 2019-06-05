@@ -15,9 +15,8 @@ parser = argparse.ArgumentParser(description="run the submarine")
 parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
 parser.add_argument('-m', '--manual', action='store_true', help="start in manual mode") #TODO: keep the killswitch from killing programs in manual mode
 parser.add_argument('-d', '--dry-run', action='store_true', help="start as if on land, with video input from a file (not currently functional - may be better implemented with alt. neural network files")
-parser.add_argument('-t', '--training_set', help="specify set of targets to use")
 parser.add_argument('-s', '--state-machine', default="execute_withState", help="set name of state machine to use (default: %(default)s)")
-parser.add_argument('-n', '--network', default="run-nnet", help="set name of neural network to use (default: %(default)s)")
+parser.add_argument('-n', '--network-model', default="ssd_mobilenet_v1_coco", help="set name of neural network to use (default: %(default)s)")
 parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
 args = parser.parse_args()
 
@@ -76,10 +75,8 @@ def start():
     global delay_start
     
     #keep logs from each start in a separate directory
-    curr_log_dir = '/home/owl/logs/{}'.format(datetime.datetime.now())
+    curr_log_dir = '../logs/{}/'.format(datetime.datetime.now())
     os.mkdir(curr_log_dir)
-    curr_log_dir += '/'
-
 
     print('starting roscore')
     with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
@@ -88,10 +85,10 @@ def start():
 
     delay_start = time.time()
     if not delay_read(10):
-        print('starting run-nnet')
-        with open('{}ssdout.txt'.format(curr_log_dir), 'w') as ssdout:
-            ssd = subprocess.Popen(['python', '/home/owl/src/ncs-ros/{}.py'.format(args.network)], stdout=ssdout, stderr=ssdout)
-        curr_children.append(ssd)
+        print('starting Neural Network')
+        with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
+            network = subprocess.Popen(['python3', '../submodules/jetson_live_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+        curr_children.append(network)
 
         print('starting movement_package')
         with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
@@ -101,8 +98,8 @@ def start():
     if not args.manual:    
         if not delay_read(30): #delay to give the pixhawk time to start
             print('starting execute')
-            with open('{}execout.txt'.format(curr_log_dir), 'w') as exout:
-                ex = subprocess.Popen(['python', '/home/owl/src/subdriver2018/execute_withState.py', args.state_machine], stdout=exout, stderr=exout)
+            with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
+                ex = subprocess.Popen(['python', '../submodules/subdriver2018/execute_withState.py', args.state_machine], stdout=executeout, stderr=executeout)
             curr_children.append(ex)
             print('exiting start')
 
@@ -127,49 +124,10 @@ def delay_read(duration):
                 last_read = '1'
     return stopped
 
-# hardcoded port number means arduino has to be the second USB device plugged in
+# hardcoded port number means arduino has to remaped in udev rules to arduino_0
 ser = serial.Serial('/dev/arduino_0', 9600, timeout=.001)
 
 #the loop everything runs from
 while True:
     listen()
 
-
-
-#code for claw control from 2018 competition - probably useless now
-
-# start()
-# print('started')
-# time.sleep(5)
-# stop()
-# print('stopped')
-
-# except serial.serialutil.SerialException:
-#      #need to find the proper function here (would fix numerous problems)
-#     ser.close()
-#     ser.open()
-#     pass
-#print(serial.__version__)
-
-#program for sending servo command 
-#run " servo("closeclaw") " will send a serial command to arduino to close claw
-#str servo = ''
-    # def servocode(servo):
-    #     if(servo=='closeclaw'):
-    #         ser.write(b'A')
-    #         servo=('')
-    #     elif(servo=="openclaw"):
-    #         ser.write(b'B')
-    #         servo=('')
-    #     elif(servo=="storeball"):
-    #         ser.write(b'C')
-    #         servo=('')
-    #     elif(servo=="retrieveball"):
-    #         ser.write(b'D')
-    #         servo=('')  
-    #     else:
-    #         return;    
-
-
-    # elif (ser.in_waiting==0):
-# servocode(servo='closeclaw') #command for testing communication
