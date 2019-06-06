@@ -91,12 +91,12 @@ def start():
         if (not args.no_network):
             print('starting Neural Network')
             with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-                network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+                network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model', args.network_model], stdout=networkout, stderr=networkout)
             curr_children.append(network)
 
         print('starting movement_package')
         with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
-            mv = subprocess.Popen(['roslaunch', '../catkin_workspace/src/movement_package/launch/manualmode.launch'], stdout=mvout, stderr=mvout)    
+            mv = subprocess.Popen(['roslaunch', '../catkin_ws/src/movement_package/launch/manualmode.launch'], stdout=mvout, stderr=mvout)    
         curr_children.append(mv)
 
         if not args.manual:
@@ -120,12 +120,12 @@ def start():
             if(not args.no_network):
                 print('starting Neural Network')
                 with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-                    network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+                    network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model', args.network_model], stdout=networkout, stderr=networkout)
                 curr_children.append(network)
 
             print('starting movement_package')
             with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
-                mv = subprocess.Popen(['roslaunch', '../catkin_workspace/src/movement_package/launch/manualmode.launch'], stdout=mvout, stderr=mvout)    
+                mv = subprocess.Popen(['roslaunch', '../catkin_ws/src/movement_package/launch/manualmode.launch'], stdout=mvout, stderr=mvout)    
             curr_children.append(mv)
             delay_start = time.time()
         if not args.manual:    
