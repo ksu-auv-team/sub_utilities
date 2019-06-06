@@ -15,9 +15,11 @@ parser = argparse.ArgumentParser(description="run the submarine")
 parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
 parser.add_argument('-m', '--manual', action='store_true', help="start in manual mode") #TODO: keep the killswitch from killing programs in manual mode
 parser.add_argument('-d', '--dry-run', action='store_true', help="start as if on land, with video input from a file (not currently functional - may be better implemented with alt. neural network files")
-parser.add_argument('-s', '--state-machine', default="execute_withState", help="set name of state machine to use (default: %(default)s)")
+parser.add_argument('-s', '--state-machine', default="full_state_machine", help="set name of state machine to use (default: %(default)s)")
 parser.add_argument('-n', '--network-model', default="ssd_mobilenet_v1_coco", help="set name of neural network to use (default: %(default)s)")
 parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
+parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
+parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
 args = parser.parse_args()
 
 # future subprocesses
@@ -55,53 +57,76 @@ def listen():
         if (ArduinoCommand=='1' and last_read =='0'):
             print('read 1')
             last_read = '1'
-            print(last_read)
             start()         
             #os.system("roslaunch movement_package manualmode.launch") #restart code from startup
         elif (ArduinoCommand=='0' and last_read == '1'):
             print('read 0')
             last_read = '0'
-            print(last_read)
             kill_children()
             print('stopped')
 
 #start ALL the things
 def start():
     global rc
-    global ssd
+    global network
     global mv
     global ex
     global curr_children
     global delay_start
     
     #keep logs from each start in a separate directory
-    curr_log_dir = '../logs/{}/'.format(datetime.datetime.now())
+    script_path = os.path.dirname(os.path.realpath(__file__)) + '/'
+    curr_log_dir = script_path + '../logs/{}/'.format(datetime.datetime.now())
     os.mkdir(curr_log_dir)
 
-    print('starting roscore')
-    with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
-        rc = subprocess.Popen(['roscore'], stdout=rcout, stderr=rcout)
-    curr_children.append(rc)
+    if(args.no_arduino):
+        print('starting roscore')
+        with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
+            rc = subprocess.Popen(['roscore'], stdout=rcout, stderr=rcout)
+        curr_children.append(rc)
 
-    delay_start = time.time()
-    if not delay_read(10):
         print('starting Neural Network')
         with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-            network = subprocess.Popen(['python3', '../submodules/jetson_live_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+            network = subprocess.Popen(['python3', script_path + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
         curr_children.append(network)
 
         print('starting movement_package')
         with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
             mv = subprocess.Popen(['roslaunch', 'movement_package', 'manualmode.launch'], stdout=mvout, stderr=mvout)    
         curr_children.append(mv)
-        delay_start = time.time()
-    if not args.manual:    
-        if not delay_read(30): #delay to give the pixhawk time to start
+
+        if not args.manual:
             print('starting execute')
             with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
-                ex = subprocess.Popen(['python', '../submodules/subdriver2018/execute_withState.py', args.state_machine], stdout=executeout, stderr=executeout)
+                ex = subprocess.Popen(['python', script_path + '../submodules/subdriver2018/execute_withState.py', '--machine ' + args.state_machine], stdout=executeout, stderr=executeout)
             curr_children.append(ex)
             print('exiting start')
+
+    else:
+        print('starting roscore')
+        with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
+            rc = subprocess.Popen(['roscore'], stdout=rcout, stderr=rcout)
+        curr_children.append(rc)
+
+        delay_start = time.time()
+        if not delay_read(10):
+            print('starting Neural Network')
+            with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
+                network = subprocess.Popen(['python3', script_path + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+            curr_children.append(network)
+
+            print('starting movement_package')
+            with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
+                mv = subprocess.Popen(['roslaunch', 'movement_package', 'manualmode.launch'], stdout=mvout, stderr=mvout)    
+            curr_children.append(mv)
+            delay_start = time.time()
+        if not args.manual:    
+            if not delay_read(30): #delay to give the pixhawk time to start
+                print('starting execute')
+                with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
+                    ex = subprocess.Popen(['python', script_path + '../submodules/subdriver2018/execute_withState.py', '--machine ' + args.state_machine], stdout=executeout, stderr=executeout)
+                curr_children.append(ex)
+                print('exiting start')
 
 # listen mid-startup for <duration> seconds to be ready to shut down any existing subprocesses if the switch is turned off
 def delay_read(duration):
@@ -116,7 +141,6 @@ def delay_read(duration):
             if (ArduinoCommand=='0' and last_read == '1'):
                 print('read 0')
                 last_read = '0'
-                print(last_read)
                 kill_children()
                 stopped = True
                 return stopped
@@ -125,9 +149,13 @@ def delay_read(duration):
     return stopped
 
 # hardcoded port number means arduino has to remaped in udev rules to arduino_0
-ser = serial.Serial('/dev/arduino_0', 9600, timeout=.001)
+if not args.no_arduino:
+    ser = serial.Serial('/dev/arduino_0', 9600, timeout=.001)
 
 #the loop everything runs from
+if args.no_arduino:
+    start()
 while True:
-    listen()
+    if not args.no_arduino:
+        listen()
 
