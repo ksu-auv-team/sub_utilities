@@ -40,10 +40,12 @@ last_read = '0'
 # shut down child processes for restarting them cleanly or exiting
 def kill_children():
     global curr_children
+    print("Removing all processes...")
     for i in range(len(curr_children)):
         proc = curr_children.pop()
         if not proc.poll():
             proc.kill()
+    print("Done!")
 
 #shut down all subprocesses when program is exited
 atexit.register(kill_children)
@@ -75,8 +77,8 @@ def start():
     global delay_start
     
     #keep logs from each start in a separate directory
-    script_path = os.path.dirname(os.path.realpath(__file__)) + '/'
-    curr_log_dir = script_path + '../logs/{}/'.format(datetime.datetime.now())
+    script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
+    curr_log_dir = script_directory + '../logs/{}/'.format(datetime.datetime.now())
     os.mkdir(curr_log_dir)
 
     if(args.no_arduino):
@@ -87,7 +89,7 @@ def start():
 
         print('starting Neural Network')
         with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-            network = subprocess.Popen(['python3', script_path + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+            network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
         curr_children.append(network)
 
         print('starting movement_package')
@@ -98,11 +100,11 @@ def start():
         if not args.manual:
             print('starting execute')
             with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
-                ex = subprocess.Popen(['python', script_path + '../submodules/subdriver2018/execute_withState.py', '--machine ' + args.state_machine], stdout=executeout, stderr=executeout)
+                ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine ' + args.state_machine], stdout=executeout, stderr=executeout)
             curr_children.append(ex)
             print('exiting start')
 
-    else:
+    else: # We do have an arduino hooked up...
         print('starting roscore')
         with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
             rc = subprocess.Popen(['roscore'], stdout=rcout, stderr=rcout)
@@ -112,7 +114,7 @@ def start():
         if not delay_read(10):
             print('starting Neural Network')
             with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-                network = subprocess.Popen(['python3', script_path + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+                network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
             curr_children.append(network)
 
             print('starting movement_package')
@@ -124,7 +126,7 @@ def start():
             if not delay_read(30): #delay to give the pixhawk time to start
                 print('starting execute')
                 with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
-                    ex = subprocess.Popen(['python', script_path + '../submodules/subdriver2018/execute_withState.py', '--machine ' + args.state_machine], stdout=executeout, stderr=executeout)
+                    ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine ' + args.state_machine], stdout=executeout, stderr=executeout)
                 curr_children.append(ex)
                 print('exiting start')
 
@@ -148,14 +150,17 @@ def delay_read(duration):
                 last_read = '1'
     return stopped
 
-# hardcoded port number means arduino has to remaped in udev rules to arduino_0
-if not args.no_arduino:
-    ser = serial.Serial('/dev/arduino_0', 9600, timeout=.001)
-
-#the loop everything runs from
-if args.no_arduino:
-    start()
-while True:
+if __name__ == '__main__':
+    # hardcoded port number means arduino has to remaped in udev rules to arduino_0
     if not args.no_arduino:
-        listen()
+        ser = serial.Serial('/dev/arduino_0', 9600, timeout=.001)
+
+    # If we are running without an arduino hooked up, just run the start, don't listen()
+    if args.no_arduino:
+        start()
+
+    #the loop everything runs from
+    while True:
+        if not args.no_arduino:
+            listen()
 
