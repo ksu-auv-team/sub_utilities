@@ -87,10 +87,11 @@ def start():
             rc = subprocess.Popen(['roscore'], stdout=rcout, stderr=rcout)
         curr_children.append(rc)
 
-        print('starting Neural Network')
-        with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-            network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
-        curr_children.append(network)
+        if (not args.no_network):
+            print('starting Neural Network')
+            with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
+                network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+            curr_children.append(network)
 
         print('starting movement_package')
         with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
@@ -112,10 +113,11 @@ def start():
 
         delay_start = time.time()
         if not delay_read(10):
-            print('starting Neural Network')
-            with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-                network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
-            curr_children.append(network)
+            if(not args.no_network):
+                print('starting Neural Network')
+                with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
+                    network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model {}'.format(args.network_model)], stdout=networkout, stderr=networkout)
+                curr_children.append(network)
 
             print('starting movement_package')
             with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
