@@ -20,7 +20,7 @@ parser.add_argument('-n', '--network-model', default="ssd_mobilenet_v1_coco", he
 parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
 parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
 parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
-parser.add_argument('--debug-execute', action='store_true', help='Will run execute with the debug flag')
+parser.add_argument('--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
 args = parser.parse_args()
 
 # future subprocesses
@@ -82,37 +82,46 @@ def start():
     curr_log_dir = script_directory + '../logs/{}/'.format(datetime.datetime.now())
     os.mkdir(curr_log_dir)
 
+    # Create commands to run from argparse
+    roscore_command = ['roscore']
+    
+    network_string = "python3 " + script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py' + ' --model ' + args.network_model
+    network_command = network_string.split()
+
+    movement_string = "roslaunch ../catkin_ws/src/movement_package/launch/manualmode.launch"
+    movement_command = movement_string.split()
+
+    execute_string = 'python ' + script_directory + '../submodules/subdriver2018/execute_withState.py --machine ' + args.state_machine + ' ' + args.debug_execute
+    execute_command = execute_string.split()
+
     if(args.no_arduino): # Run the programs without starting up the arduino
         print('starting roscore')
         with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
-            rc = subprocess.Popen(['roscore'], stdout=rcout, stderr=rcout)
+            rc = subprocess.Popen(roscore_command, stdout=rcout, stderr=rcout)
         curr_children.append(rc)
 
         if (not args.no_network):
             print('starting Neural Network')
             with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-                network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model', args.network_model], stdout=networkout, stderr=networkout)
+                network = subprocess.Popen(network_command, stdout=networkout, stderr=networkout)
             curr_children.append(network)
 
         print('starting movement_package')
         with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
-            mv = subprocess.Popen(['roslaunch', '../catkin_ws/src/movement_package/launch/manualmode.launch'], stdout=mvout, stderr=mvout)    
+            mv = subprocess.Popen(movement_command, stdout=mvout, stderr=mvout)    
         curr_children.append(mv)
 
         if not args.manual:
             print('starting execute')
             with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
-                if(args.debug_execute):
-                    ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine', args.state_machine, '--debug'], stdout=executeout, stderr=executeout)
-                else:
-                    ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine', args.state_machine], stdout=executeout, stderr=executeout)
+                ex = subprocess.Popen(execute_command, stdout=executeout, stderr=executeout)
             curr_children.append(ex)
             print('exiting start')
 
     else: # We do have an arduino hooked up...
         print('starting roscore')
         with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
-            rc = subprocess.Popen(['roscore'], stdout=rcout, stderr=rcout)
+            rc = subprocess.Popen(roscore_command, stdout=rcout, stderr=rcout)
         curr_children.append(rc)
 
         delay_start = time.time()
@@ -120,22 +129,19 @@ def start():
             if(not args.no_network):
                 print('starting Neural Network')
                 with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-                    network = subprocess.Popen(['python3', script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py', '--model', args.network_model], stdout=networkout, stderr=networkout)
+                    network = subprocess.Popen(network_command, stdout=networkout, stderr=networkout)
                 curr_children.append(network)
 
             print('starting movement_package')
             with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
-                mv = subprocess.Popen(['roslaunch', '../catkin_ws/src/movement_package/launch/manualmode.launch'], stdout=mvout, stderr=mvout)    
+                mv = subprocess.Popen(movement_command, stdout=mvout, stderr=mvout)    
             curr_children.append(mv)
             delay_start = time.time()
         if not args.manual:    
             if not delay_read(30): #delay to give the pixhawk time to start
                 print('starting execute')
                 with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
-                    if(args.debug_execute):
-                        ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine', args.state_machine, '--debug'], stdout=executeout, stderr=executeout)
-                    else:
-                        ex = subprocess.Popen(['python', script_directory + '../submodules/subdriver2018/execute_withState.py', '--machine', args.state_machine], stdout=executeout, stderr=executeout)
+                    ex = subprocess.Popen(execute_command, stdout=executeout, stderr=executeout)
                 curr_children.append(ex)
                 print('exiting start')
 
