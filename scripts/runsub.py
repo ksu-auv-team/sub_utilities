@@ -63,7 +63,7 @@ class SubSession():
         network_string = "python3 " + script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py' + ' --model ' + args.network_model
         network_command = network_string.split()
 
-        movement_string = "roslaunch ../catkin_ws/src/movement_package/launch/manualmode.launch"
+        movement_string = "roslaunch movement_package manualmode.launch"
         movement_command = movement_string.split()
 
         execute_string = 'python ' + script_directory + '../submodules/subdriver2018/execute_withState.py --machine ' + args.state_machine + ' ' + args.debug_execute
@@ -74,18 +74,21 @@ class SubSession():
             with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
                 self.rc = subprocess.Popen(roscore_command, stdout=rcout, stderr=rcout)
             self.curr_children.append(self.rc)
-
+            
+            time.sleep(3)
             if (not args.no_network):
                 print('starting Neural Network')
                 with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
                     self.network = subprocess.Popen(network_command, stdout=networkout, stderr=networkout)
                 self.curr_children.append(self.network)
 
+            time.sleep(3)
             print('starting movement_package')
             with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
                 self.mv = subprocess.Popen(movement_command, stdout=mvout, stderr=mvout)    
             self.curr_children.append(self.mv)
 
+            time.sleep(3)
             if not args.manual:
                 print('starting execute')
                 with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
