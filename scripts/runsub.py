@@ -3,10 +3,11 @@
 import serial #pySerial
 import os
 import subprocess
-import atexit
 import time
 import datetime
 import argparse
+import signal
+import sys
 
 class SubSession():
     def __init__(self):
@@ -27,6 +28,8 @@ class SubSession():
         print("Removing all processes...")
         for i in range(len(self.curr_children)):
             proc = self.curr_children.pop()
+            print("Killing: ")
+            print(proc)
             if not proc.poll():
                 proc.kill()
         print("Done!")
@@ -135,6 +138,11 @@ class SubSession():
                     self.last_read = '1'
         return stopped
 
+    def signal_handler(self, sig, frame):
+        print("\nCaptured Ctrl+C, stopping execution...")
+        self.kill_children()
+        sys.exit(0)
+
 if __name__ == '__main__':
     # Parse command line arguments:
     parser = argparse.ArgumentParser(description="run the submarine")
@@ -152,9 +160,9 @@ if __name__ == '__main__':
     # Create Subsession
     go_sub_go = SubSession()
 
-    #shut down all subprocesses when program is exited
-    atexit.register(go_sub_go.kill_children())
-
+    # captureing Ctrl+C
+    signal.signal(signal.SIGINT, go_sub_go.signal_handler)
+    
     # hardcoded port number means arduino has to remaped in udev rules to arduino_0
     if not args.no_arduino:
         ser = serial.Serial('/dev/arduino_0', 9600, timeout=.001)
