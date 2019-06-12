@@ -5,51 +5,57 @@ import os
 import cv_bridge
 from sensor_msgs.msg import Image
 import datetime
+import argparse
 
-cam = cv2.VideoCapture(0)
-bridge = cv_bridge.CvBridge()
-cv2.namedWindow("test")
-cv2.startWindowThread()
+def main():
+    cam = cv2.VideoCapture(0)
+    bridge = cv_bridge.CvBridge()
+    cv2.namedWindow("Sub_Video")
+    cv2.startWindowThread()
 
-rospy.init_node('topic_publisher')
-pub = rospy.Publisher('imgs', Image, queue_size=1)
-rate = rospy.Rate(2)
-img_counter = 0
+    rospy.init_node('Sub_Video_Publish')
+    pub = rospy.Publisher('imgs', Image, queue_size=1)
+    rate = rospy.Rate(2)
+    img_counter = 0
 
-save_dir = None
+    save_dir = None
 
-while not rospy.is_shutdown():
-    ret, frame = cam.read()
+    if (args.save_video):
+        save_dir = script_directory + '../saved_video/{}'.format(datetime.datetime.now())
+        os.mkdir(save_dir)
 
-    if (img_counter % 3) == 0:
-        if not ret:
-            break
-        if save_dir is None:
-            save_dir = "./pict_output_{}".format(datetime.datetime.now().strftime("%Y-%m-%d %H %M %S"))
-            os.mkdir(save_dir)
-        img_name = save_dir + "{}/opencv_frame_{}.jpg".format(save_dir, img_counter)
-        cv2.imwrite(img_name, frame)
-    msg = bridge.cv2_to_imgmsg(frame)
-    pub.publish(msg)
-    print("publishing {}".format(img_counter))
+    while not rospy.is_shutdown():
+        ret, frame = cam.read()
 
-
-    img_counter += 1
-    cv2.imshow("test", frame)
-    cv2.waitKey(1)
-
-
+        if (img_counter % 3) == 0:
+            if not ret:
+                break
+            #if save_dir is None:
+            #    save_dir = "./pict_output_{}".format(datetime.datetime.now().strftime("%Y-%m-%d %H %M %S"))
+            #    os.mkdir(save_dir)
+            img_name = save_dir + "{}/opencv_frame_{}.jpg".format(save_dir, img_counter)
+            cv2.imwrite(img_name, frame)
+        msg = bridge.cv2_to_imgmsg(frame)
+        pub.publish(msg)
+        print("publishing {}".format(img_counter))
 
 
-    '''
-    k = cv2.waitKey(1)
-    if k%256 == 27:
-        # ESC pressed
-        print("Escape hit, closing...")
-        break
-    '''
-    # rate.sleep()
+        img_counter += 1
+        cv2.imshow("Sub_Video", frame)
+        cv2.waitKey(1)
 
-cam.release()
+    cam.release()
 
-cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    # Get current script directory
+    script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
+
+    # Parse command line arguments:
+    parser = argparse.ArgumentParser(description="Get video from the sub over a ros topic")
+    parser.add_argument('-s', '--save-video', action='store_true', help="Boolean flag to save video to 'saved_video'")
+    args = parser.parse_args()
+
+    main()
