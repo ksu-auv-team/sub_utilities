@@ -21,13 +21,13 @@ def main():
     save_dir = None
 
     if (args.save_video):
-        save_dir = script_directory + '../saved_video/{}'.format(datetime.datetime.now())
+        save_dir = script_directory + '../saved_video/{}/'.format(datetime.datetime.now())
         os.mkdir(save_dir)
 
     while not rospy.is_shutdown():
         ret, frame = cam.read()
 
-        if (img_counter % 3) == 0:
+        if (img_counter % 3) == 0 and args.save_video:
             if not ret:
                 break
             #if save_dir is None:
