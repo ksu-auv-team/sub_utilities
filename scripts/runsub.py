@@ -60,7 +60,10 @@ class SubSession():
         # Create commands to run from argparse
         roscore_command = ['roscore']
 
-        network_string = "python3 " + script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py' + ' --model ' + args.network_model
+        video_string = "python " + script_directory + " pict.py " + args.no_save_images
+        video_command = video_string.split()
+
+        network_string = "python3 " + script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py' + ' --model ' + args.network_model + ' ' + args.no_save_images
         network_command = network_string.split()
 
         movement_string = "roslaunch movement_package manualmode.launch"
@@ -76,7 +79,13 @@ class SubSession():
             self.curr_children.append(self.rc)
             
             time.sleep(3)
-            if (not args.no_network):
+            if (args.no_network):
+                print("starting video node")
+                with open('{}videoout.txt'.format(curr_log_dir), 'w') as videoout:
+                    self.video = subprocess.Popen(video_command, stdout=videoout, stderr=videoout)
+                self.curr_children.append(self.video)
+
+            else:
                 print('starting Neural Network')
                 with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
                     self.network = subprocess.Popen(network_command, stdout=networkout, stderr=networkout)
@@ -157,6 +166,7 @@ if __name__ == '__main__':
     parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
     parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
     parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
+    parser.add_argument('--no-save-images', action='store_const', default ='', const='--no-save-images', help='Will not record any video/pictures from the sub')
     parser.add_argument('--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
     args = parser.parse_args()
 

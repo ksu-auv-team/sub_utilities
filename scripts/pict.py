@@ -18,6 +18,8 @@ def main():
     rate = rospy.Rate(2)
     img_counter = 0
 
+    # Get current script directory
+    script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
     save_dir = None
 
     if (args.save_video):
@@ -27,7 +29,7 @@ def main():
     while not rospy.is_shutdown():
         ret, frame = cam.read()
 
-        if (img_counter % 3) == 0 and args.save_video:
+        if (img_counter % 3) == 0 and args.no_save_images:
             if not ret:
                 break
             #if save_dir is None:
@@ -50,12 +52,9 @@ def main():
 
 
 if __name__ == "__main__":
-    # Get current script directory
-    script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
-
     # Parse command line arguments:
     parser = argparse.ArgumentParser(description="Get video from the sub over a ros topic")
-    parser.add_argument('-s', '--save-video', action='store_true', help="Boolean flag to save video to 'saved_video'")
+    parser.add_argument('-s', '--no-save-images', action='store_true', help="Boolean flag to not save images to 'saved_video'")
     args = parser.parse_args()
 
     main()
