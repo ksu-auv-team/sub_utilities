@@ -103,7 +103,8 @@ class SubSession():
                 with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
                     self.ex = subprocess.Popen(execute_command, stdout=executeout, stderr=executeout)
                 self.curr_children.append(self.ex)
-                print('exiting start')
+                
+            print('exiting start')
 
         else: # We do have an arduino hooked up...
             print('starting roscore')
@@ -130,7 +131,8 @@ class SubSession():
                     with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
                         self.ex = subprocess.Popen(execute_command, stdout=executeout, stderr=executeout)
                     self.curr_children.append(self.ex)
-                    print('exiting start')
+                    
+            print('exiting start')
 
     # listen mid-startup for <duration> seconds to be ready to shut down any existing subprocesses if the switch is turned off
     def delay_read(self, duration):
