@@ -32,21 +32,21 @@ If you push a commit to a submodule, it will not ***Automatically*** show up her
 Because the movement\_package is inside a catkin\_workspace, we need to initialize it a little bit differently than the others. Just run these commands:
 
 ```bash
-# Initialize Ros Melodic
-sudo apt update && \
-sudo apt -y install git vim cmake catkin python-catkin-pkg-modules && \
-source /opt/ros/melodic/setup.bash
-```
-
-```bash
 # Install ROS Melodic
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' && \
-sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116 && \
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 && \
 sudo apt update && \
 sudo apt install ros-melodic-desktop-full && \
 sudo rosdep init && \
 rosdep update && \
 echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+```
+
+```bash
+# Initialize Ros Melodic
+sudo apt update && \
+sudo apt -y install git vim cmake catkin python-catkin-pkg-modules && \
+source /opt/ros/melodic/setup.bash
 ```
 
 ```bash
