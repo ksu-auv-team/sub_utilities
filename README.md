@@ -64,12 +64,11 @@ Setup catkin\_ws:
 ```bash
 # Setup local repo
 cd path/to/sub-utilities
-pwd
-echo "source <output-from-pwd>/catkin_ws/devel/setup.bash" >> ~/.bashrc # Make sure to replace <output-from-pwd> with the actual output
-source ~/.bashrc
+echo "source $(pwd)/catkin_ws/devel/setup.bash" >> ~/.bashrc
 git submodule init
 git submodule update
 cd catkin_ws/src
 catkin_init_workspace
 catkin_make -j $(nproc) -C ..
+source ~/.bashrc
 ``` 
