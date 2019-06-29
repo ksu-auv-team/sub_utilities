@@ -22,7 +22,7 @@ def main():
     script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
     save_dir = None
 
-    if (args.save_video):
+    if (not args.no_save_images):
         save_dir = script_directory + '../saved_video/{}/'.format(datetime.datetime.now())
         os.mkdir(save_dir)
 
