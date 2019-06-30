@@ -71,4 +71,9 @@ cd catkin_ws/src
 catkin_init_workspace
 catkin_make -j $(nproc) -C ..
 source ~/.bashrc
+```
+
+While running, you may not be able to set the mavros stuff correctly, if so, run:
+```bash
+rosrun mavros mavparam set SYSID_MYGCS 1
 ``` 
