@@ -10,7 +10,6 @@ import argparse
 def main():
     cam = cv2.VideoCapture(0)
     bridge = cv_bridge.CvBridge()
-    cv2.namedWindow("Sub_Video")
     #cv2.startWindowThread()
 
     if (not args.debug):
