@@ -63,7 +63,7 @@ class SubSession():
         video_string = "python " + script_directory + "pict.py " + args.no_save_images
         video_command = video_string.split()
 
-        network_string = "python3 " + script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py' + ' --model ' + args.network_model + ' ' + args.no_save_images
+        network_string = "python3 " + script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py --no-video --model ' + args.network_model + ' ' + args.no_save_images
         network_command = network_string.split()
 
         movement_string = "roslaunch movement_package manualmode.launch"
