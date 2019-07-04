@@ -24,18 +24,18 @@ class SubSession():
         
     # shut down child processes for restarting them cleanly or exiting
     def kill_children(self):
-        try:
-            self.curr_children
-            print("Removing all processes...")
-            for i in range(len(self.curr_children)):
+        self.curr_children
+        print("Removing all processes...")
+        for i in range(len(self.curr_children)):
+            try:
                 proc = self.curr_children.pop()
                 print("Killing: ")
                 print(proc)
                 if not proc.poll():
                     proc.kill()
-            print("Done!")
-        except Exception as e:
-            print(e)
+            except Exception as e:
+                print(e)
+        print("Done!")
 
     # listens to the killswitch over serial for state changes and calls start() and kill_children() when necessary
     def listen(self):
