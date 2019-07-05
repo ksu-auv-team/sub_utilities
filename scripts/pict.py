@@ -25,6 +25,7 @@ def main():
 
     if (not args.no_save_images):
         save_dir = script_directory + '../saved_video/{}/'.format(datetime.datetime.now())
+        print(save_dir)
         os.mkdir(save_dir)
 
     while not rospy.is_shutdown():
@@ -36,7 +37,7 @@ def main():
             #if save_dir is None:
             #    save_dir = "./pict_output_{}".format(datetime.datetime.now().strftime("%Y-%m-%d %H %M %S"))
             #    os.mkdir(save_dir)
-            img_name = save_dir + "{}/opencv_frame_{}.jpg".format(save_dir, img_counter)
+            img_name = "{}/opencv_frame_{}.jpg".format(save_dir, img_counter)
             cv2.imwrite(img_name, frame)
         if(not args.debug):
             msg = bridge.cv2_to_imgmsg(frame)
