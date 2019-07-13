@@ -41,20 +41,15 @@ class SubSession():
     def listen(self):
         if (ser.in_waiting>=1):
             ArduinoCommand=ser.read().decode('utf-8',errors='ignore')
-            print("ArduinoCommand: " + ArduinoCommand)
-            # ArduinoCommand = ArduinoCommand.decode('utf-8')
             if (ArduinoCommand=='1' and self.last_read =='0'):
                 print('read 1')
                 self.last_read = '1'
                 self.start()         
-                #os.system("roslaunch movement_package manualmode.launch") #restart code from startup
             elif (ArduinoCommand=='0' and self.last_read == '1'):
                 print('read 0')
                 self.last_read = '0'
                 self.kill_children()
                 print('stopped')
-        #else:
-        #    print("In Listen")
 
     #start ALL the things
     def start(self):
@@ -78,7 +73,7 @@ class SubSession():
         execute_string = 'python ' + script_directory + '../submodules/subdriver2018/execute_withState.py --machine ' + args.state_machine + ' ' + args.debug_execute
         execute_command = execute_string.split()
 
-        #if(args.no_arduino): # Run the programs without starting up the arduino
+        # Start running actual commands:
         print('starting roscore')
         with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
             self.rc = subprocess.Popen(roscore_command, stdout=rcout, stderr=rcout)
@@ -89,7 +84,7 @@ class SubSession():
         # Run Video / Network Commands:
         run_video = True
         if not args.no_arduino:
-            run_video = not self.delay_read(3)
+            run_video = not self.delay_read(10)
         else:
             time.sleep(10)
         if (args.no_network and run_video):
@@ -105,13 +100,12 @@ class SubSession():
         else:
             return
 
-
         self.delay_start = time.time() # The time we will compare our arduino time to
-
+        
         # Run Movement Package
         run_movement = True
         if not args.no_arduino:
-            run_movement = not self.delay_read(3)
+            run_movement = not self.delay_read(10)
         else:
             time.sleep(10)
         if (run_movement):
@@ -121,17 +115,17 @@ class SubSession():
             self.curr_children.append(self.mv)
         else:
             return
-
+        
 
         self.delay_start = time.time() # The time we will compare our arduino time to
 
         # Run Execute
         run_execute = True
         if not args.no_arduino:
-            run_execute = not self.delay_read(3)
+            run_execute = not self.delay_read(20)
         else:
-            time.sleep(30)
-        if (not args.manual and run_execute and False):
+            time.sleep(20)
+        if (not args.manual and run_execute):
             print('starting execute')
             with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
                 self.ex = subprocess.Popen(execute_command, stdout=executeout, stderr=executeout)
@@ -140,40 +134,8 @@ class SubSession():
             print('Manual Mode')
         else:
             return
-
-        time.sleep(3)
                 
         print('exiting start')
-
-        '''
-        else: # We do have an arduino hooked up...
-            print('starting roscore')
-            with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
-                self.rc = subprocess.Popen(roscore_command, stdout=rcout, stderr=rcout)
-            self.curr_children.append(self.rc)
-
-            self.delay_start = time.time()
-            if not self.delay_read(10):
-                if(not args.no_network):
-                    print('starting Neural Network')
-                    with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
-                        self.network = subprocess.Popen(network_command, stdout=networkout, stderr=networkout)
-                    self.curr_children.append(self.network)
-
-                print('starting movement_package')
-                with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
-                    self.mv = subprocess.Popen(movement_command, stdout=mvout, stderr=mvout)    
-                self.curr_children.append(self.mv)
-                self.delay_start = time.time()
-            if not args.manual:    
-                if not self.delay_read(30): #delay to give the pixhawk time to start
-                    print('starting execute')
-                    with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
-                        self.ex = subprocess.Popen(execute_command, stdout=executeout, stderr=executeout)
-                    self.curr_children.append(self.ex)
-                    
-            print('exiting start')
-        '''
 
     # listen mid-startup for <duration> seconds to be ready to shut down any existing subprocesses if the switch is turned off
     def delay_read(self, duration):
@@ -222,7 +184,7 @@ if __name__ == '__main__':
     
     # hardcoded port number means arduino has to remaped in udev rules to arduino_0
     if not args.no_arduino:
-        ser = serial.Serial('/dev/ttyACM0', 9600, timeout=.001)
+        ser = serial.Serial('/dev/arduino_0', 9600, timeout=.001)
         ser.flush()
 
     # If we are running without an arduino hooked up, just run the start, don't listen()
