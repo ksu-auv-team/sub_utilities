@@ -40,7 +40,7 @@ class SubSession():
     # listens to the killswitch over serial for state changes and calls start() and kill_children() when necessary
     def listen(self):
         if (ser.in_waiting>=1):
-            ArduinoCommand=ser.read()
+            ArduinoCommand=ser.read().decode('utf-8',errors='ignore')
             # ArduinoCommand = ArduinoCommand.decode('utf-8')
             if (ArduinoCommand=='1' and self.last_read =='0'):
                 print('read 1')
