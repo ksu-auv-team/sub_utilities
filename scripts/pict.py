@@ -14,7 +14,7 @@ def main():
 
     if (not args.debug):
         rospy.init_node('Sub_Video_Publish')
-        pub = rospy.Publisher('imgs', Image, queue_size=1)
+        pub = rospy.Publisher('raw_imgs', Image, queue_size=1)
         rate = rospy.Rate(2)
     
     img_counter = 0
