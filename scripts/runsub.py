@@ -35,6 +35,8 @@ class SubSession():
                     proc.kill()
             except Exception as e:
                 print(e)
+        bashCommand = "pkill -f ros"
+        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
         print("Done!")
 
     # listens to the killswitch over serial for state changes and calls start() and kill_children() when necessary
