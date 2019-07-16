@@ -8,9 +8,11 @@ import datetime
 import argparse
 import signal
 import sys
+import rospy
+from std_msgs.msg import Bool
 
 class SubSession():
-    def __init__(self):
+    def __init__(self, no_arduino=False):
         # Subprocesses:
         self.curr_children = []
         self.rc = None
@@ -20,7 +22,9 @@ class SubSession():
         
         # Arduino variables
         self.delay_start = 0
-        self.last_read = '0'        
+        self.sub_is_killed = True
+        self.no_arduino = no_arduino
+        self.rospy.Subscriber("killswitch_is_killed", Bool, killswitch_callback)
         
     # shut down child processes for restarting them cleanly or exiting
     def kill_children(self):
@@ -160,6 +164,16 @@ class SubSession():
         self.kill_children()
         sys.exit(0)
 
+    def killswitch_callback(self, msg):
+        if (msg.data and self.sub_is_killed==False):
+            print('Sub has been killed')
+            self.sub_is_killed = True
+            self.kill_children()
+        elif (not msg.data and self.sub_is_killed==True):
+            print('Starting Sub')
+            self.sub_is_killed = False
+            self.start()
+
 if __name__ == '__main__':
     # Parse command line arguments:
     parser = argparse.ArgumentParser(description="run the submarine")
@@ -176,7 +190,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Create Subsession
-    go_sub_go = SubSession()
+    go_sub_go = SubSession(args.no_arduino)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
@@ -184,16 +198,9 @@ if __name__ == '__main__':
     # Wait for arduino to start
     time.sleep(3)
     
-    # hardcoded port number means arduino has to remaped in udev rules to arduino_0
-    if not args.no_arduino:
-        ser = serial.Serial('/dev/arduino_0', 9600, timeout=.001)
-        ser.flush()
-
     # If we are running without an arduino hooked up, just run the start, don't listen()
     if args.no_arduino:
         go_sub_go.start()
 
     #the loop everything runs from
-    while True:
-        if not args.no_arduino:
-            go_sub_go.listen()
+    rospy.spin()

@@ -4,10 +4,10 @@
 ros::NodeHandle nh;
 
 std_msgs::Bool is_killed;
-ros::Publisher killswitch_pub("killswitch_status", &is_killed);
+ros::Publisher killswitch_pub("killswitch_is_killed", &is_killed);
 
 void setup() {
-    ng.initNode();
+    nh.initNode();
     nh.advertise(killswitch_pub);
 }
 
@@ -20,4 +20,5 @@ void loop() {
         is_killed.data = true;
         killswitch_pub.publish(&is_killed);
     }
+    delay(50);
 }
