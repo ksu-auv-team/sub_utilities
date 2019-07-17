@@ -15,6 +15,8 @@ class SubSession():
     def __init__(self, no_arduino=False):
         # Subprocesses:
         self.curr_children = []
+        self.arduino_process = []
+        self.arduino = None
         self.rc = None
         self.network = None
         self.mv = None
@@ -25,6 +27,11 @@ class SubSession():
         self.sub_is_killed = True
         self.no_arduino = no_arduino
         self.rospy.Subscriber("killswitch_is_killed", Bool, killswitch_callback)
+
+        #keep logs from each start in a separate directory
+        self.script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
+        self.curr_log_dir = self.script_directory + '../logs/{}/'.format(datetime.datetime.now())
+        os.mkdir(self.curr_log_dir)
         
     # shut down child processes for restarting them cleanly or exiting
     def kill_children(self):
@@ -43,6 +50,19 @@ class SubSession():
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
         print("Done!")
 
+    def kill_arduino(self):
+        print("Removing Arduino Process...")
+        for i in range(len(self.arduino_process)):
+            try:
+                proc = self.arduino_process.pop()
+                print("Killing: ")
+                print(proc)
+                if not proc.poll():
+                    proc.kill()
+            except Exception as e:
+                print(e)
+            print("Removed Arduino Process!")
+
     # listens to the killswitch over serial for state changes and calls start() and kill_children() when necessary
     def listen(self):
         if (ser.in_waiting>=1):
@@ -59,29 +79,24 @@ class SubSession():
 
     #start ALL the things
     def start(self):
-        #keep logs from each start in a separate directory
-        script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
-        curr_log_dir = script_directory + '../logs/{}/'.format(datetime.datetime.now())
-        os.mkdir(curr_log_dir)
-
         # Create commands to run from argparse
         roscore_command = ['roscore']
 
-        video_string = "python " + script_directory + "pict.py " + args.no_save_images
+        video_string = "python " + self.script_directory + "pict.py " + args.no_save_images
         video_command = video_string.split()
 
-        network_string = "python3 " + script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py --no-video --model ' + args.network_model + ' ' + args.no_save_images
+        network_string = "python3 " + self.script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py --no-video --model ' + args.network_model + ' ' + args.no_save_images
         network_command = network_string.split()
 
         movement_string = "roslaunch movement_package manualmode.launch"
         movement_command = movement_string.split()
 
-        execute_string = 'python ' + script_directory + '../submodules/subdriver2018/execute_withState.py --machine ' + args.state_machine + ' ' + args.debug_execute
+        execute_string = 'python ' + self.script_directory + '../submodules/subdriver2018/execute_withState.py --machine ' + args.state_machine + ' ' + args.debug_execute
         execute_command = execute_string.split()
 
         # Start running actual commands:
         print('starting roscore')
-        with open('{}roscoreout.txt'.format(curr_log_dir), 'w') as rcout:
+        with open('{}roscoreout.txt'.format(self.curr_log_dir), 'w') as rcout:
             self.rc = subprocess.Popen(roscore_command, stdout=rcout, stderr=rcout)
         self.curr_children.append(self.rc)
            
@@ -95,12 +110,12 @@ class SubSession():
             time.sleep(10)
         if (args.no_network and run_video):
             print("starting video node")
-            with open('{}videoout.txt'.format(curr_log_dir), 'w') as videoout:
+            with open('{}videoout.txt'.format(self.curr_log_dir), 'w') as videoout:
                 self.video = subprocess.Popen(video_command, stdout=videoout, stderr=videoout)
             self.curr_children.append(self.video)
         elif (run_video):
             print('starting Neural Network')
-            with open('{}networkout.txt'.format(curr_log_dir), 'w') as networkout:
+            with open('{}networkout.txt'.format(self.curr_log_dir), 'w') as networkout:
                 self.network = subprocess.Popen(network_command, stdout=networkout, stderr=networkout)
             self.curr_children.append(self.network)
         else:
@@ -116,7 +131,7 @@ class SubSession():
             time.sleep(10)
         if (run_movement):
             print('starting movement_package')
-            with open('{}movementout.txt'.format(curr_log_dir), 'w') as mvout:
+            with open('{}movementout.txt'.format(self.curr_log_dir), 'w') as mvout:
                 self.mv = subprocess.Popen(movement_command, stdout=mvout, stderr=mvout)    
             self.curr_children.append(self.mv)
         else:
@@ -133,7 +148,7 @@ class SubSession():
             time.sleep(20)
         if (not args.manual and run_execute):
             print('starting execute')
-            with open('{}executeout.txt'.format(curr_log_dir), 'w') as executeout:
+            with open('{}executeout.txt'.format(self.curr_log_dir), 'w') as executeout:
                 self.ex = subprocess.Popen(execute_command, stdout=executeout, stderr=executeout)
             self.curr_children.append(self.ex)
         elif (args.manual):
@@ -162,6 +177,8 @@ class SubSession():
     def signal_handler(self, sig, frame):
         print("\nCaptured Ctrl+C, stopping execution...")
         self.kill_children()
+        if not self.no_arduino:
+            self.kill_arduino()
         sys.exit(0)
 
     def killswitch_callback(self, msg):
@@ -201,6 +218,15 @@ if __name__ == '__main__':
     # If we are running without an arduino hooked up, just run the start, don't listen()
     if args.no_arduino:
         go_sub_go.start()
+
+    # If we do have an arduino hooked up, we need to forward the ROS stuff over
+    else:
+        print('starting Arduino Process')
+        arduino_string = "rosrun rosserial_python serial_node.py /dev/arduino_0"
+        arduino_command = arduino_string.split()
+        with open('{}arduinoout.txt'.format(go_sub_go.curr_log_dir), 'w') as ardout:
+            go_sub_go.arduino = subprocess.Popen(arduino_command, stdout=ardout, stderr=ardout)
+        go_sub_go.arduino_process.append(go_sub_go.arduino)
 
     #the loop everything runs from
     rospy.spin()
