@@ -47,5 +47,6 @@ void loop() {
     // Reset last_val to curr_val
     last_val = curr_val;
 
+    nh.spinOnce();
     delay(50);
 }
