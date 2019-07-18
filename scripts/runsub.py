@@ -254,9 +254,12 @@ if __name__ == '__main__':
 
     # Wait for arduino to start
     time.sleep(3)
-    
+
     # Create Subsession
     go_sub_go = SubSession(args.no_arduino)
+
+    # Wait for processes to start
+    time.sleep(3)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
