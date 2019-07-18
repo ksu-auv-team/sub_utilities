@@ -136,14 +136,14 @@ class SubSession():
         
         self.delay_start = time.time() # The time we will compare our arduino time to
         while(time.time() - self.delay_start < 10 and not self.sub_is_killed):
-            rospy.spin()
+            pass
 
         # Run Movement Package
         self.curr_children.append(self.start_movement())
 
         self.delay_start = time.time() # The time we will compare our arduino time to
         while(time.time() - self.delay_start < 10) and not self.sub_is_killed:
-            rospy.spin()
+            pass
 
         # Run Execute
         if(args.manual):
