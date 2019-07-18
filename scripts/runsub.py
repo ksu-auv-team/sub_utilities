@@ -129,20 +129,21 @@ class SubSession():
 
     #start ALL the things
     def start(self):     
-        
+        rate = rospy.Rate(10)
+
         # Run the Video Node
         self.curr_children.append(self.start_video())
         
         self.delay_start = time.time() # The time we will compare our arduino time to
         while(time.time() - self.delay_start < 10):
-            pass
+            rate.sleep()
 
         # Run Movement Package
         self.curr_children.append(self.start_movement())
 
         self.delay_start = time.time() # The time we will compare our arduino time to
         while(time.time() - self.delay_start < 10):
-            pass
+            rate.sleep()
 
         # Run Execute
         if(args.manual):
