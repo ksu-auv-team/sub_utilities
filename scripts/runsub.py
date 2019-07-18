@@ -22,8 +22,9 @@ class SubSession():
         self.sub_is_killed = True
         self.no_arduino = no_arduino
 
-        # Ros init
-        self.killswitch_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_callback)
+        # ROS subscribers
+        killswitch_start_sub = rospy.Subscriber("killswitch_run_start", Bool, self.killswitch_start_callback)
+        killswitch_realtime_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_realtime_callback, queue_size=1)
 
         #keep logs from each start in a separate directory
         self.script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -129,21 +130,21 @@ class SubSession():
 
     #start ALL the things
     def start(self):     
-        rate = rospy.Rate(10)
+        #rate = rospy.Rate(10)
 
         # Run the Video Node
         self.curr_children.append(self.start_video())
         
         self.delay_start = time.time() # The time we will compare our arduino time to
-        #while(time.time() - self.delay_start < 10 and not self.sub_is_killed):
-        #    pass
-        rospy.sleep(10)
+        while(time.time() - self.delay_start < 10 and not self.sub_is_killed):
+            pass
+        #rospy.sleep(10)
 
         # Run Movement Package
         self.curr_children.append(self.start_movement())
 
         self.delay_start = time.time() # The time we will compare our arduino time to
-        while(time.time() - self.delay_start < 10) and not self.sub_is_killed:
+        while(time.time() - self.delay_start < 10 and not self.sub_is_killed):
             pass
 
         # Run Execute
@@ -223,15 +224,18 @@ class SubSession():
             self.kill_startup()
         sys.exit(0)
 
-    def killswitch_callback(self, msg):
-        if (msg.data and self.sub_is_killed==False):
-            print('Sub has been killed')
-            self.sub_is_killed = True
-            self.kill_children()
-        elif (not msg.data and self.sub_is_killed==True):
+    def killswitch_start_callback(self, msg):
+        if(msg.data):
             print('Starting Sub Runtime Processes')
-            self.sub_is_killed = False
             self.start()
+        else:
+            print('Sub has been killed')
+            self.kill_children()
+            
+
+    def killswitch_realtime_callback(self, msg):
+            self.sub_is_killed = msg.data
+        
 
 if __name__ == '__main__':
     # Parse command line arguments:
@@ -257,9 +261,11 @@ if __name__ == '__main__':
     # Wait for arduino to start
     time.sleep(3)
     
+    # Always start roscore
+    go_sub_go.startup_processes.append(go_sub_go.start_roscore())
+    
     # If we are running without an arduino hooked up, just run the start, don't listen()
     if args.no_arduino:
-        go_sub_go.startup_processes.append(go_sub_go.start_roscore())
         go_sub_go.start()
 
     # If we do have an arduino hooked up, we need to forward the ROS stuff over
@@ -269,6 +275,7 @@ if __name__ == '__main__':
         if(not args.no_network):
             go_sub_go.startup_processes.append(go_sub_go.start_network())
 
+    # Ros init
     rospy.init_node("run_sub")
 
     #the loop everything runs from
