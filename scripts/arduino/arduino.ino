@@ -14,7 +14,8 @@ bool curr_val = false;
 void setup() {
     // Starut Nodes
     nh.initNode();
-    nh.advertise(killswitch_pub);
+    nh.advertise(killswitch_status_pub);
+    nh.advertise(killswitch_start_pub);
     
     // Initialize Values
     curr_val = digitalRead(4);
