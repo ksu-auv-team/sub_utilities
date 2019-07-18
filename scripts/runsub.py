@@ -135,14 +135,14 @@ class SubSession():
         self.curr_children.append(self.start_video())
         
         self.delay_start = time.time() # The time we will compare our arduino time to
-        while(time.time() - self.delay_start < 10):
+        while(time.time() - self.delay_start < 10 and not self.sub_is_killed):
             rate.sleep()
 
         # Run Movement Package
         self.curr_children.append(self.start_movement())
 
         self.delay_start = time.time() # The time we will compare our arduino time to
-        while(time.time() - self.delay_start < 10):
+        while(time.time() - self.delay_start < 10) and not self.sub_is_killed:
             rate.sleep()
 
         # Run Execute
