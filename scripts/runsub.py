@@ -22,15 +22,15 @@ class SubSession():
         self.sub_is_killed = True
         self.no_arduino = no_arduino
 
-        # ROS subscribers
-        self.startup_processes.append(self.start_roscore())
-        killswitch_start_sub = rospy.Subscriber("killswitch_run_start", Bool, self.killswitch_start_callback)
-        killswitch_realtime_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_realtime_callback, queue_size=1)
-
         #keep logs from each start in a separate directory
         self.script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
         self.curr_log_dir = self.script_directory + '../logs/{}/'.format(datetime.datetime.now())
         os.mkdir(self.curr_log_dir)
+        
+        # ROS subscribers
+        self.startup_processes.append(self.start_roscore())
+        killswitch_start_sub = rospy.Subscriber("killswitch_run_start", Bool, self.killswitch_start_callback)
+        killswitch_realtime_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_realtime_callback, queue_size=1)
         
     # shut down child processes for restarting them cleanly or exiting
     def kill_children(self):
