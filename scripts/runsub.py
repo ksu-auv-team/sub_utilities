@@ -21,7 +21,7 @@ class SubSession():
         self.delay_start = 0
         self.sub_is_killed = True
         self.no_arduino = no_arduino
-        self.rospy.Subscriber("killswitch_is_killed", Bool, killswitch_callback)
+        self.killswitch_sub = rospy.Subscriber("killswitch_is_killed", Bool, killswitch_callback)
 
         #keep logs from each start in a separate directory
         self.script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
