@@ -242,8 +242,7 @@ if __name__ == '__main__':
     # Parse command line arguments:
     parser = argparse.ArgumentParser(description="run the submarine")
     parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
-    parser.add_argument('-m', '--manual', action='store_true', help="start in manual mode") #TODO: keep the killswitch from killing programs in manual mode
-    parser.add_argument('-d', '--dry-run', action='store_true', help="start as if on land, with video input from a file (not currently functional - may be better implemented with alt. neural network files")
+    parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
     parser.add_argument('-s', '--state-machine', default="BaseStateMachine", help="set name of state machine to use (default: %(default)s)")
     parser.add_argument('-n', '--network-model', default="ssd_mobilenet_v1_coco", help="set name of neural network to use (default: %(default)s)")
     parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
