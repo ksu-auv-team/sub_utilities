@@ -23,7 +23,7 @@ class SubSession():
         self.no_arduino = no_arduino
 
         # ROS subscribers
-        self.startup_processes.append(go_sub_go.start_roscore())
+        self.startup_processes.append(self.start_roscore())
         killswitch_start_sub = rospy.Subscriber("killswitch_run_start", Bool, self.killswitch_start_callback)
         killswitch_realtime_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_realtime_callback, queue_size=1)
 
