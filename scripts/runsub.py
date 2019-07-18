@@ -252,14 +252,14 @@ if __name__ == '__main__':
     parser.add_argument('--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
     args = parser.parse_args()
 
+    # Wait for arduino to start
+    time.sleep(3)
+    
     # Create Subsession
     go_sub_go = SubSession(args.no_arduino)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
-
-    # Wait for arduino to start
-    time.sleep(3)
     
     # If we are running without an arduino hooked up, just run the start, don't listen()
     if args.no_arduino:
