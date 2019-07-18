@@ -23,6 +23,7 @@ class SubSession():
         self.no_arduino = no_arduino
 
         # ROS subscribers
+        self.startup_processes.append(go_sub_go.start_roscore())
         killswitch_start_sub = rospy.Subscriber("killswitch_run_start", Bool, self.killswitch_start_callback)
         killswitch_realtime_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_realtime_callback, queue_size=1)
 
@@ -260,9 +261,6 @@ if __name__ == '__main__':
 
     # Wait for arduino to start
     time.sleep(3)
-    
-    # Always start roscore
-    go_sub_go.startup_processes.append(go_sub_go.start_roscore())
     
     # If we are running without an arduino hooked up, just run the start, don't listen()
     if args.no_arduino:
