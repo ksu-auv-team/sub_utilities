@@ -44,10 +44,6 @@ class SubSession():
                     proc.kill()
             except Exception as e:
                 print(e)
-        '''
-        bashCommand = "pkill -f ros"
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
-        '''
         print("Done!")
 
     def kill_startup(self):
@@ -62,6 +58,8 @@ class SubSession():
             except Exception as e:
                 print(e)
             print("Removed Startup Process!")
+        bashCommand = "pkill -f ros"
+        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
 
     # listens to the killswitch over serial for state changes and calls start() and kill_children() when necessary
     def listen(self):
