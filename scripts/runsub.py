@@ -23,7 +23,7 @@ class SubSession():
         self.no_arduino = no_arduino
 
         # Ros init
-        rospy.init_node()
+        rospy.init_node("run_sub")
         self.killswitch_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_callback)
 
         #keep logs from each start in a separate directory
