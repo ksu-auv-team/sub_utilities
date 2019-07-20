@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import serial #pySerial
 import os
 import subprocess
 import time
@@ -62,20 +61,6 @@ class SubSession():
         bashCommand = "pkill -f ros"
         process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
 
-    # listens to the killswitch over serial for state changes and calls start() and kill_children() when necessary
-    def listen(self):
-        if (ser.in_waiting>=1):
-            ArduinoCommand=ser.read().decode('utf-8',errors='ignore')
-            if (ArduinoCommand=='1' and self.last_read =='0'):
-                print('read 1')
-                self.last_read = '1'
-                self.start()         
-            elif (ArduinoCommand=='0' and self.last_read == '1'):
-                print('read 0')
-                self.last_read = '0'
-                self.kill_children()
-                print('stopped')
-
     def start_roscore(self):
         roscore_command = ['roscore']
 
@@ -131,15 +116,12 @@ class SubSession():
 
     #start ALL the things
     def start(self):     
-        #rate = rospy.Rate(10)
-
         # Run the Video Node
         self.curr_children.append(self.start_video())
         
         self.delay_start = time.time() # The time we will compare our arduino time to
         while(time.time() - self.delay_start < 10 and not self.sub_is_killed):
             pass
-        #rospy.sleep(10)
 
         # Run Movement Package
         self.curr_children.append(self.start_movement())
@@ -153,70 +135,8 @@ class SubSession():
             print('Manual Mode enabled, start your joystick node')
         else:
             self.curr_children.append(self.start_execute())
-
-        '''
-        self.delay_start = time.time() # The time we will compare our arduino time to
-
-        # Run Video / Network Commands:
-        run_video = True
-        if not args.no_arduino:
-            run_video = not self.delay_read(10)
-        else:
-            time.sleep(10)
-        if (args.no_network and run_video):
-            self.curr_children.append(self.start_video())
-        elif (run_video):
-            self.curr_children.append(self.start_network())
-        else:
-            return
-
-        self.delay_start = time.time() # The time we will compare our arduino time to
-        
-        # Run Movement Package
-        run_movement = True
-        if not args.no_arduino:
-            run_movement = not self.delay_read(10)
-        else:
-            time.sleep(10)
-        if (run_movement):   
-            self.curr_children.append(self.start_movement())
-        else:
-            return
-        
-
-        self.delay_start = time.time() # The time we will compare our arduino time to
-
-        # Run Execute
-        run_execute = True
-        if not args.no_arduino:
-            run_execute = not self.delay_read(20)
-        else:
-            time.sleep(20)
-        if (not args.manual and run_execute):
-            self.curr_children.append(self.start_execute())
-        elif (args.manual):
-            print('Manual Mode')
-        else:
-            return
-        '''
-                
+             
         print('exiting start')
-
-    # listen mid-startup for <duration> seconds to be ready to shut down any existing subprocesses if the switch is turned off
-    def delay_read(self, duration):
-        stopped = False
-        while(time.time() - self.delay_start) < duration:
-            if (ser.in_waiting>=1):
-                ArduinoCommand=ser.read().decode('utf-8',errors='ignore')
-                if (ArduinoCommand=='0' and self.last_read == '1'):
-                    print('read 0')
-                    self.last_read = '0'
-                    self.kill_children()
-                    stopped = True
-                    return stopped
-                elif ArduinoCommand == '1':
-                    self.last_read = '1'
-        return stopped
 
     def signal_handler(self, sig, frame):
         print("\nCaptured Ctrl+C, stopping execution...")
@@ -257,9 +177,6 @@ if __name__ == '__main__':
 
     # Create Subsession
     go_sub_go = SubSession(args.no_arduino)
-
-    # Wait for processes to start
-    time.sleep(3)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
