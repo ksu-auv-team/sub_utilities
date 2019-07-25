@@ -18,6 +18,7 @@ void setup() {
     nh.advertise(killswitch_start_pub);
     
     // Initialize Values
+    pinMode(4, INPUT);
     curr_val = digitalRead(4);
     last_val = curr_val;
 }
