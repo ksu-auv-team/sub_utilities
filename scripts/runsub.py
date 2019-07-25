@@ -183,6 +183,8 @@ if __name__ == '__main__':
     
     # If we are running without an arduino hooked up, just run the start, don't listen()
     if args.no_arduino:
+        if(not args.no_network):
+            go_sub_go.startup_processes.append(go_sub_go.start_network())
         go_sub_go.start()
 
     # If we do have an arduino hooked up, we need to forward the ROS stuff over
