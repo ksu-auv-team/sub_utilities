@@ -87,7 +87,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--debug', action='store_true', help='Wll not run the ros stuff, allows for just running the video')
     parser.add_argument('-v', '--show-video', action='store_true', help='Will show the video onboard with opencv')
     parser.add_argument('-f', '--front-camera', default='/dev/video0', help='/path/to/video, defaults to /dev/video0')
-    parser.add_argument('-b', '--bottom-camera', default='/dev/video1', help='/path/to/video, defaults to /dev/video1')
+    parser.add_argument('-b', '--bottom-camera', default='/dev/video2', help='/path/to/video, defaults to /dev/video2')
     parser.add_argument('--no-front', action='store_true', help='Will not open the front camera')
     parser.add_argument('--no-bottom', action='store_true', help='Will not open the bottom camera')
     parser.add_argument('--front-height', default=420, help='Set the front video capture height for your camera in pixels')
