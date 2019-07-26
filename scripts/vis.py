@@ -6,14 +6,24 @@ import cv_bridge
 import argparse
 
 bridge = cv_bridge.CvBridge()
-def raw_img_callback(msg):
+def front_raw_img_callback(msg):
     img = bridge.imgmsg_to_cv2(msg)
-    cv2.imshow('raw_img', img)
+    cv2.imshow('front_raw_img', img)
     cv2.waitKey(1)
 
-def network_img_callback(msg):
+def front_network_img_callback(msg):
     img = bridge.imgmsg_to_cv2(msg)
-    cv2.imshow('network_img', img)
+    cv2.imshow('front_network_img', img)
+    cv2.waitKey(1)
+
+def bottom_raw_img_callback(msg):
+    img = bridge.imgmsg_to_cv2(msg)
+    cv2.imshow('bottom_raw_img', img)
+    cv2.waitKey(1)
+
+def bottom_network_img_callback(msg):
+    img = bridge.imgmsg_to_cv2(msg)
+    cv2.imshow('bottom_network_img', img)
     cv2.waitKey(1)
 
 if __name__ == "__main__":
@@ -23,10 +33,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if(args.network):
-        rospy.Subscriber('network_imgs', Image, network_img_callback)
+        rospy.Subscriber('front_network_imgs', Image, front_network_img_callback, queue_size=1)
+        rospy.Subscriber('bottom_network_imgs', Image, bottom_network_img_callback, queue_size=1)
 
     if(args.raw):
-        rospy.Subscriber('raw_imgs', Image, raw_img_callback)
+        rospy.Subscriber('front_raw_imgs', Image, front_raw_img_callback, queue_size=1)
+        rospy.Subscriber('bottom_raw_imgs', Image, bottom_raw_img_callback, queue_size=1)
     
     if(not args.raw and not args.network):
         print("Please specify -r for raw images, -n for network images, or both to display both")
