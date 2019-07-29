@@ -30,15 +30,21 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="This script pulls images over ros topic and displays them to the local computer")
     parser.add_argument('-n', '--network', action='store_true', help='Will listen to the network_imgs topic and display images')
     parser.add_argument('-r', '--raw', action='store_true', help='Will listen to the raw_imgs topic and display images')
+    parser.add_argument('--no-front', action='store_true', help='Will not view the front camera')
+    parser.add_argument('--no-bottom', action='store_true', help='Will not view the bottom camera')
     args = parser.parse_args()
 
     if(args.network):
-        rospy.Subscriber('front_network_imgs', Image, front_network_img_callback, queue_size=1)
-        rospy.Subscriber('bottom_network_imgs', Image, bottom_network_img_callback, queue_size=1)
+        if not args.no_front:
+            rospy.Subscriber('front_network_imgs', Image, front_network_img_callback, queue_size=1)
+        if not args.no_bottom:
+            rospy.Subscriber('bottom_network_imgs', Image, bottom_network_img_callback, queue_size=1)
 
     if(args.raw):
-        rospy.Subscriber('front_raw_imgs', Image, front_raw_img_callback, queue_size=1)
-        rospy.Subscriber('bottom_raw_imgs', Image, bottom_raw_img_callback, queue_size=1)
+        if not args.no_front:
+            rospy.Subscriber('front_raw_imgs', Image, front_raw_img_callback, queue_size=1)
+        if not args.no_bottom:
+            rospy.Subscriber('bottom_raw_imgs', Image, bottom_raw_img_callback, queue_size=1)
     
     if(not args.raw and not args.network):
         print("Please specify -r for raw images, -n for network images, or both to display both")
