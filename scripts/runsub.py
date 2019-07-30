@@ -141,8 +141,7 @@ class SubSession():
     def signal_handler(self, sig, frame):
         print("\nCaptured Ctrl+C, stopping execution...")
         self.kill_children()
-        if not self.no_arduino:
-            self.kill_startup()
+        self.kill_startup()
         sys.exit(0)
 
     def killswitch_start_callback(self, msg):
@@ -185,6 +184,7 @@ if __name__ == '__main__':
     if args.no_arduino:
         if(not args.no_network):
             go_sub_go.startup_processes.append(go_sub_go.start_network())
+        time.sleep(3)
         go_sub_go.start()
 
     # If we do have an arduino hooked up, we need to forward the ROS stuff over
