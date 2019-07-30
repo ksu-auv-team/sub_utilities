@@ -70,7 +70,7 @@ class SubSession():
             return rc
 
     def start_video(self):
-        video_string = "python " + self.script_directory + "pict.py " + args.no_save_images
+        video_string = "python " + self.script_directory + "camera_node.py " + args.no_save_images
         video_command = video_string.split()
 
         print("starting video node")
