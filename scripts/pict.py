@@ -49,8 +49,10 @@ def main():
                 break
             front_img_name = "{}/front_opencv_frame_{}.jpg".format(save_dir, img_counter)
             bottom_img_name = "{}/bottom_opencv_frame_{}.jpg".format(save_dir, img_counter)
-            cv2.imwrite(front_img_name, front_frame)
-            cv2.imwrite(bottom_img_name, bottom_frame)
+            if (not args.no_front):
+                cv2.imwrite(front_img_name, front_frame)
+            if (not args.no_bottom):
+                cv2.imwrite(bottom_img_name, bottom_frame)
         if(not args.debug):
             if not args.no_front and front_ret:
                 front_msg = bridge.cv2_to_imgmsg(front_frame)
