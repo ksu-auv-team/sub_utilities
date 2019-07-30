@@ -38,6 +38,9 @@ def main():
         os.mkdir(save_dir)
 
     while not rospy.is_shutdown():
+        front_ret = False
+        bottom_ret = False
+
         if not args.no_front:
             front_ret, front_frame = front_cam.read()
 
@@ -49,8 +52,11 @@ def main():
                 break
             front_img_name = "{}/front_opencv_frame_{}.jpg".format(save_dir, img_counter)
             bottom_img_name = "{}/bottom_opencv_frame_{}.jpg".format(save_dir, img_counter)
-            cv2.imwrite(front_img_name, front_frame)
-            cv2.imwrite(bottom_img_name, bottom_frame)
+            if not args.no_front:
+                cv2.imwrite(front_img_name, front_frame)
+            if not args.no_bottom:
+                cv2.imwrite(bottom_img_name, bottom_frame)
+
         if(not args.debug):
             if not args.no_front and front_ret:
                 front_msg = bridge.cv2_to_imgmsg(front_frame)
@@ -64,12 +70,14 @@ def main():
         img_counter += 1
 
         if(args.show_video and (front_ret or bottom_ret)):
-            cv2.imshow("Sub_Front_Video", front_frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-            cv2.imshow("Sub_Bottom_Video", bottom_frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            if not args.no_front:
+                cv2.imshow("Sub_Front_Video", front_frame)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            if not args.no_bottom:
+                cv2.imshow("Sub_Bottom_Video", bottom_frame)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
 
     if not args.no_front:
         front_cam.release()
@@ -90,10 +98,10 @@ if __name__ == "__main__":
     parser.add_argument('-b', '--bottom-camera', default='/dev/video2', help='/path/to/video, defaults to /dev/video2')
     parser.add_argument('--no-front', action='store_true', help='Will not open the front camera')
     parser.add_argument('--no-bottom', action='store_true', help='Will not open the bottom camera')
-    parser.add_argument('--front-height', default=420, help='Set the front video capture height for your camera in pixels')
-    parser.add_argument('--bottom-height', default=420, help='Set the bottom video capture height for your camera in pixels')
-    parser.add_argument('--front-width', default=860, help='Set the front video capture width for your camera in pixels')
-    parser.add_argument('--bottom-width', default=860, help='Set the bottom video capture width for your camera in pixels')
+    parser.add_argument('--front-height', default=420, type=int, help='Set the front video capture height for your camera in pixels')
+    parser.add_argument('--bottom-height', default=420, type=int, help='Set the bottom video capture height for your camera in pixels')
+    parser.add_argument('--front-width', default=860, type=int, help='Set the front video capture width for your camera in pixels')
+    parser.add_argument('--bottom-width', default=860, type=int, help='Set the bottom video capture width for your camera in pixels')
     args = parser.parse_args()
 
     if args.no_front and args.no_bottom:
