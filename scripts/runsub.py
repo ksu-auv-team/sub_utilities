@@ -162,7 +162,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="run the submarine")
     parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
     parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
-    parser.add_argument('-s', '--state-machine', default="BaseStateMachine", help="set name of state machine to use (default: %(default)s)")
+    parser.add_argument('-s', '--state-machine', default="QualifyStraightMachine", help="set name of state machine to use (default: %(default)s)")
     carser.add_argument('-n', '--network-model', default="qual_2_rcnn_frozen", help="set name of neural network to use (default: %(default)s)")
     parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
     parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
