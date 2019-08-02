@@ -169,6 +169,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
     parser.add_argument('--no-save-images', action='store_const', default ='', const='--no-save-images', help='Will not record any video/pictures from the sub')
     parser.add_argument('--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
+    parser.add_argument('--start-front-network', action='store_true', help='Will begin with the front neural network running')
+    parser.add_argument('--start-bottom-network', action='store_true', help='Will begin with the bottom neural network running')
     args = parser.parse_args()
 
     # Wait for arduino to start
@@ -176,6 +178,17 @@ if __name__ == '__main__':
 
     # Create Subsession
     go_sub_go = SubSession(args.no_arduino)
+
+    # Ros init
+    rospy.init_node("run_sub")
+    
+    if not args.no_network:
+        if args.start_front_network:
+            front_pub = rospy.Publisher('enable_front_network', Bool, queue_size=1)
+            front_pub.publish(True)
+        if args.start_bottom_network:
+            bottom_pub = rospy.Publisher('enable_bottom_network', Bool, queue_size=1)
+            bottom_pub.publish(True)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
@@ -192,9 +205,6 @@ if __name__ == '__main__':
         go_sub_go.startup_processes.append(go_sub_go.start_arduino())
         if(not args.no_network):
             go_sub_go.startup_processes.append(go_sub_go.start_network())
-
-    # Ros init
-    rospy.init_node("run_sub")
 
     #the loop everything runs from
     rospy.spin()
