@@ -120,7 +120,7 @@ class SubSession():
         self.curr_children.append(self.start_video())
         
         self.delay_start = time.time() # The time we will compare our arduino time to
-        while(time.time() - self.delay_start < 10 and not self.sub_is_killed):
+        while(time.time() - self.delay_start < 2 and not self.sub_is_killed):
             pass
 
         # Run Movement Package
@@ -163,7 +163,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
     parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
     parser.add_argument('-s', '--state-machine', default="BaseStateMachine", help="set name of state machine to use (default: %(default)s)")
-    parser.add_argument('-n', '--network-model', default="prequal_no_pole_mobilenet_ssd_v2_frozen", help="set name of neural network to use (default: %(default)s)")
+    parser.add_argument('-n', '--network-model', default="qual_1_frozen", help="set name of neural network to use (default: %(default)s)")
     parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
     parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
     parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
