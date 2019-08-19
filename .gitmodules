@@ -1,12 +1,12 @@
-[submodule "submodules/subdriver2018"]
-	path = submodules/subdriver2018
-	url = https://github.com/ksu-auv-team/subdriver2018.git
-[submodule "submodules/jetson_nano_inference"]
-	path = submodules/jetson_nano_inference
-	url = https://github.com/ksu-auv-team/jetson_nano_inference
 [submodule "submodules/ncs-ros"]
 	path = submodules/ncs-ros
 	url = https://github.com/ksu-auv-team/ncs-ros.git
 [submodule "catkin_ws/src/movement_package"]
 	path = catkin_ws/src/movement_package
 	url = https://github.com/ksu-auv-team/movement_package.git
+[submodule "submodules/subdriver"]
+	path = submodules/subdriver
+	url = https://github.com/ksu-auv-team/subdriver.git
+[submodule "submodules/network_wrapper"]
+	path = submodules/network_wrapper
+	url = https://github.com/ksu-auv-team/network_wrapper.git
