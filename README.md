@@ -27,6 +27,21 @@ Inside the `submodules` directory is where all the submodules of this repo live.
 
 If you push a commit to a submodule, it will not ***Automatically*** show up here. You need to go into the `submodules/<your-updated-submodule>` directory, do a `git fetch`, then checkout the commit that you want. When you then return to the base `sub-utilities` directory, and do a `git status`, you should see it showing that you updated a submodule. You can then `git add` and `git commit` that like normal and it will update the `sub-utilities` repo. 
 
+In this repo, we have a few submodules currently: 
+ * **ncs-ros** - Legacy Neural Network stuff 
+ * **network_wrapper** - The current way we run a neural network 
+ * **subdriver** - The state machine and autonomy code
+ * **movement_package** - The wrapper for driving the sub with PWM commands
+
+### network\_wrapper
+The network wrapper repo is what is in charge of taking the images we publish out from the scripts above and running neural network inference on them. It then published back out both the new images with boxes drawn, and the actual detection information. 
+
+#TODO - Link to Tensorflow and Instaliation information
+
+### subdriver
+Subdriver is what we use to control the high level architechture of the sub. It's what we use to control the state machine, write joystick control, publish out health data, etc. This is where you should go to work on new autonomy code changes.
+
+#TODO - Link to SMACH and show instalation 
 
 ### movement\_package
 Because the movement\_package is inside a catkin\_workspace, we need to initialize it a little bit differently than the others. Just run these commands:
