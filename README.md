@@ -54,18 +54,19 @@ sudo apt update && \
 sudo apt install ros-melodic-desktop-full && \
 sudo rosdep init && \
 rosdep update && \
-echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc &&\
+source ~/.bashrc
 ```
 
 ```bash
-# Initialize Ros Melodic
+# Install additional dependencies
 sudo apt update && \
-sudo apt -y install git vim cmake catkin python-catkin-pkg-modules && \
+sudo apt -y install git vim cmake python-catkin-pkg-modules && \
 source /opt/ros/melodic/setup.bash
 ```
 
 ```bash
-# Install extra packages
+# Install extra ros packages
 sudo apt -y install ros-melodic-mavlink ros-melodic-mavros ros-melodic-mavros-msgs \
     ros-melodic-cmake-modules ros-melodic-control-toolbox ros-melodic-joy
 ```
@@ -79,12 +80,17 @@ Setup catkin\_ws:
 ```bash
 # Setup local repo
 cd path/to/sub-utilities
-echo "source $(pwd)/catkin_ws/devel/setup.bash" >> ~/.bashrc
-git submodule init
-git submodule update
-cd catkin_ws/src
-catkin_init_workspace
-catkin_make -j $(nproc) -C ..
+
+```
+
+```bash
+# Initalize repo
+echo "source $(pwd)/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
+git submodule init && \
+git submodule update && \
+cd catkin_ws/src && \
+catkin_init_workspace && \
+catkin_make -j $(nproc) -C .. && \
 source ~/.bashrc
 ```
 
