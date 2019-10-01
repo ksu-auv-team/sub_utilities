@@ -18,7 +18,7 @@ I can't stress enough how much a brief look through [this submodules tutorial](h
 ### Scripts
 This repo also has nice startup scrips to aid in the useability of the submarine all located in the `scripts` directory. 
 
-* `pict.py` will publish camera footage on the `imgs` topic from /dev/video0
+* `camera_node.py` will publish camera footage on the `imgs` topic from /dev/video0
 * `vis.py` allows the user to listen on the `imgs` topic and show realtime video feed.
 * `runsub.py` will run the startup process for all of AUV's different nodes including: roscore, movement\_package, execute\_witState, etc. This is the script you want to run if you are trying to run the full machine. 
 
@@ -36,15 +36,18 @@ In this repo, we have a few submodules currently:
 ### network\_wrapper
 The network wrapper repo is what is in charge of taking the images we publish out from the scripts above and running neural network inference on them. It then published back out both the new images with boxes drawn, and the actual detection information. 
 
-#TODO - Link to Tensorflow and Instaliation information
+To use it for inference or training, you will need tensorflow installed on your system. There is a non-GPU-enabled version that's just called tensorflow. But we *Typically* want the GPU enabled one because it runs significantly faster. [Here's a link](https://www.tensorflow.org/install/gpu) to how to install tensorflow-gpu. Just be aware that it's not as simple as doing a `pip install`, you will need to install some CUDA enabled stuff and probably update your video drivers. It's a hastle, but a requirement to use the GPU enabled stuff. One word of advice, **really make sure you've got the right versions**. 
 
-### subdriver
+### ROS dependencies for subdriver & movement\_package
 Subdriver is what we use to control the high level architechture of the sub. It's what we use to control the state machine, write joystick control, publish out health data, etc. This is where you should go to work on new autonomy code changes.
 
-#TODO - Link to SMACH and show instalation 
+The main dependency we have for this repo is [ROS](https://www.ros.org/). We are currently using Ubuntu 18.04, so we're on ROS Melodic.
+[Here's a link](http://wiki.ros.org/melodic/Installation/Ubuntu) to the instalation page for ROS Melodic.
 
-### movement\_package
-Because the movement\_package is inside a catkin\_workspace, we need to initialize it a little bit differently than the others. Just run these commands:
+The other main dependency we have is a ros package called SMACH. SMACH is our state machine manager. It allows us to write easily executable code that we can switch around and change as we please.
+To install, it should be a simple `sudo apt install ros-melodic-smach` 
+
+Here's a copy from the ROS instalation page of how to install ros:
 
 ```bash
 # Install ROS Melodic
@@ -76,6 +79,12 @@ sudo apt -y install ros-melodic-mavlink ros-melodic-mavros ros-melodic-mavros-ms
 sudo geographiclib-get-geoids minimal
 ```
 
+### movement\_package
+
+If you haven't installed **ROS** by following the above commands, do that first.
+
+Because the movement\_package is inside a catkin\_workspace, we need to initialize it a little bit differently than the others. Just run these commands:
+
 Setup catkin\_ws:
 ```bash
 # Setup local repo
@@ -90,11 +99,6 @@ git submodule init && \
 git submodule update && \
 cd catkin_ws/src && \
 catkin_init_workspace && \
-catkin_make -j $(nproc) -C .. && \
+atkin_make -j $(nproc) -C .. && \
 source ~/.bashrc
 ```
-
-While running, you may not be able to set the mavros stuff correctly, if so, run:
-```bash
-rosrun mavros mavparam set SYSID_MYGCS 1
-``` 
