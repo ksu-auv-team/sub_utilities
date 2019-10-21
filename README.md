@@ -7,7 +7,7 @@ git clone --recurse-submodules https://github.com/ksu-auv-team/sub-utilities.git
 ```
 This will clone the repo and initialize the submodules automatically. 
 
-If you have not cloned this way, you may also:
+If you have **not** cloned this way, you may also:
 ```
 git submodule init
 git submodule update
