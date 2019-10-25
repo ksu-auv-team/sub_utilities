@@ -58,8 +58,8 @@ sudo geographiclib-get-geoids minimal
 ## Scripts
 This repo also has nice startup scrips to aid in the useability of the submarine all located in the `scripts` directory. 
 
-* `camera_node.py` will publish camera footage on the `imgs` topic from /dev/video0
-* `vis.py` allows the user to listen on the `imgs` topic and show realtime video feed.
+* `camera_node.py` will publish camera footage on the `front_raw_imgs` and `bottom_raw_imgs` topics from the video cameras.
+* `vis.py` allows the user to listen on the `front_raw_imgs` and `bottom_raw_imgs` topics and show realtime video feed.
 * `img_dir_pub.py` requries the user to input a directory of pictures. Will then publish those images over the front camera or bottom camera ros topics.
 * `runsub.py` will run the startup process for all of AUV's different nodes including: roscore, movement\_package, execute\_witState, etc. This is the script you want to run if you are trying to run the full machine. 
 
