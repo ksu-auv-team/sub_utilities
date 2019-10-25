@@ -12,6 +12,7 @@ If you have **not** cloned this way, you may also:
 git submodule init
 git submodule update
 ```
+This README will provide an explaination of each top level directory in this repo.
 
 ### ROS dependencies for subdriver & movement\_package
 Subdriver is what we use to control the high level architechture of the sub. It's what we use to control the state machine, write joystick control, publish out health data, etc. This is where you should go to work on new autonomy code changes.
@@ -54,6 +55,24 @@ sudo apt -y install ros-melodic-mavlink ros-melodic-mavros ros-melodic-mavros-ms
 # More Packages
 sudo geographiclib-get-geoids minimal
 ```
+We also have some ROS<-->Arduino dependencies that must be installed also. First, download and install the [Arduino IDE](https://www.arduino.cc/en/guide/linux). Then, follow [this article](http://wiki.ros.org/rosserial_arduino/Tutorials/Arduino%20IDE%20Setup), or the below commands:
+
+```bash
+sudo apt install ros-melodic-rosserial-arduino ros-melodic-rosserial
+```
+The preceding installation steps created ros_lib, which must be copied into the Arduino build environment to enable Arduino programs to interact with ROS.
+
+In the steps below, <sketchbook> is the directory where the Linux Arduino environment saves your sketches. Typically this is a directory called sketchbook or Arduino in your home directory. Alternately, you can install into a Windows Arduino environment.
+
+Ros_lib installation instructions are different for groovy source (catkin) than for earlier (rosbuild) or binary releases. Be sure you've selected the correct build system above to see appropriate instructions - catkin for a groovy source build, rosbuild otherwise.
+
+Note: you have to delete libraries/ros_lib in order to regenerate as its existence causes an error.
+```bash
+cd <sketchbook>/libraries
+rm -rf ros_lib
+rosrun rosserial_arduino make_libraries.py .
+```
+If you start up the Arduino IDE now, you should be able to see, under the examples, new Arduino <--> ROS examples.
 
 ## Scripts
 This repo also has nice startup scrips to aid in the useability of the submarine all located in the `scripts` directory. 
@@ -116,10 +135,12 @@ source ~/.bashrc
 TODO!!
 
 ## arduino
-TODO!!!
+The `arduino` directory holds the `.ino` files that should be loaded onto any onboard arduinos. For right now, we only have one to read in the killswitch position. These scripts use ROS in an arduino environment utilizing the `rosserial` packages. See the dependency section above to install these. 
 
 ## catkin_ws
 TODO!!!
 
 ## logs & saved_video
-TODO!!!
+The `logs` directory is pretty straightforward. Whenever you run an instance of `runsub.py`, it creates a new time-stamped directory in the logs directory. This new folder holds a single file for each process that has been started. These should hold all the `stdout` and `stderr` for each process.
+
+The `saved_video` directory is much the same. Whenever there is video being captured by the `camera_node.py` it will create a new time-stamped directory where it will save a percentage of the images (not actual video).
