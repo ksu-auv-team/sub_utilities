@@ -11,24 +11,16 @@ import rospy
 from std_msgs.msg import Bool
 from colorama import Fore
 
-def argParser():
-    # Parse command line arguments:
-    parser = argparse.ArgumentParser(description="run the submarine")
-    parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
-    parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
-    parser.add_argument('-s', '--state-machine', default="QualifyStraightMachine", help="set name of state machine to use (default: %(default)s)")
-    parser.add_argument('-n', '--network-model', default="qual_2_rcnn_frozen", help="set name of neural network to use (default: %(default)s)")
-    parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
-    parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
-    parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
-    parser.add_argument('--no-save-images', action='store_const', default ='', const='--no-save-images', help='Will not record any video/pictures from the sub')
-    parser.add_argument('--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
-    parser.add_argument('--start-front-network', action='store_true', help='Will begin with the front neural network running')
-    parser.add_argument('--start-bottom-network', action='store_true', help='Will begin with the bottom neural network running')
-    return parser.parse_args()
-
 class SubSession():
-    def __init__(self, args):
+    def __init__(self, manual, state_machine, network_model, no_save_images, debug_execute, no_arduino=False):
+        #arguements
+        self.manual = manual
+        self.state_machine = state_machine
+        self.network_model = network_model
+        self.no_save_images = no_save_images
+        self.debug_execute = debug_execute
+        self.no_arduino = no_arduino
+
         # Subprocesses:
         self.curr_children = []
         self.startup_processes = []
@@ -36,7 +28,7 @@ class SubSession():
         # Arduino variables
         self.delay_start = 0
         self.sub_is_killed = True
-        self.no_arduino = args.no_aruino
+        
 
         #keep logs from each start in a separate directory
         self.script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -88,7 +80,7 @@ class SubSession():
             return rc
 
     def start_video(self):
-        video_string = "python " + self.script_directory + "camera_node.py " + args.no_save_images
+        video_string = "python " + self.script_directory + "camera_node.py " + self.no_save_images
         video_command = video_string.split()
 
         print(Fore.GREEN + "starting video node with command: " + Fore.WHITE + video_string)
@@ -97,7 +89,7 @@ class SubSession():
             return video
 
     def start_network(self):
-        network_string = "python3 " + self.script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py --model ' + args.network_model + ' ' + args.no_save_images
+        network_string = "python3 " + self.script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py --model ' + self.network_model + ' ' + self.no_save_images
         network_command = network_string.split()
     
         print(Fore.GREEN + 'starting Neural Network with command: ' + Fore.WHITE + network_string)
@@ -115,7 +107,7 @@ class SubSession():
             return mv 
 
     def start_execute(self):
-        execute_string = 'python ' + self.script_directory + '../submodules/subdriver/execute_withState.py --machine ' + args.state_machine + ' ' + args.debug_execute
+        execute_string = 'python ' + self.script_directory + '../submodules/subdriver/execute_withState.py --machine ' + self.state_machine + ' ' + self.debug_execute
         execute_command = execute_string.split()
 
         print(Fore.GREEN + 'starting execute with command: ' + Fore.WHITE + execute_string)
@@ -134,6 +126,9 @@ class SubSession():
 
     #start ALL the things
     def start(self):     
+
+
+
         # Run the Video Node
         self.curr_children.append(self.start_video())
         
@@ -149,7 +144,7 @@ class SubSession():
             pass
 
         # Run Execute
-        if(args.manual):
+        if(self.manual):
             print('Manual Mode enabled, start your joystick node')
         else:
             self.curr_children.append(self.start_execute())
@@ -176,11 +171,26 @@ class SubSession():
         
 
 if __name__ == '__main__':
+    # Parse command line arguments:
+    parser = argparse.ArgumentParser(description="run the submarine")
+    parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
+    parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
+    parser.add_argument('-s', '--state-machine', default="QualifyStraightMachine", help="set name of state machine to use (default: %(default)s)")
+    parser.add_argument('-n', '--network-model', default="qual_2_rcnn_frozen", help="set name of neural network to use (default: %(default)s)")
+    parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
+    parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
+    parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
+    parser.add_argument('--no-save-images', action='store_const', default ='', const='--no-save-images', help='Will not record any video/pictures from the sub')
+    parser.add_argument('--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
+    parser.add_argument('--start-front-network', action='store_true', help='Will begin with the front neural network running')
+    parser.add_argument('--start-bottom-network', action='store_true', help='Will begin with the bottom neural network running')
+    args = parser.parse_args()
+
     # Wait for arduino to start
     time.sleep(3)
 
     # Create Subsession
-    go_sub_go = SubSession(argParser)
+    go_sub_go = SubSession(args.manual, args.state_machine, args.network_model, args.no_save_images, args.debug_execute, args.no_arduino)
 
     # Ros init
     rospy.init_node("run_sub")
