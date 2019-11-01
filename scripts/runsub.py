@@ -13,7 +13,7 @@ from colorama import Fore
 
 class SubSession():
     def __init__(self, manual, state_machine, network_model, no_save_images, debug_execute, no_arduino=False):
-        #arguements
+        #Arguments
         self.manual = manual
         self.state_machine = state_machine
         self.network_model = network_model
