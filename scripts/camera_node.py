@@ -16,17 +16,25 @@ def main():
 
     if not args.no_front:
         front_cam = cv2.VideoCapture(args.front_camera)
-        front_cam.set(3, args.front_width)
-        front_cam.set(4, args.front_height)
-        if (not args.debug):
-            front_pub = rospy.Publisher('front_raw_imgs', Image, queue_size=1)
+        if front_cam.isOpened():
+            front_cam.set(3, args.front_width)
+            front_cam.set(4, args.front_height)
+            if (not args.debug):
+                front_pub = rospy.Publisher('front_raw_imgs', Image, queue_size=1)
+        else:
+            print("No front camera detected!")
+            
 
     if not args.no_bottom:
         bottom_cam = cv2.VideoCapture(args.bottom_camera)
-        bottom_cam.set(3, args.bottom_width)
-        bottom_cam.set(4, args.bottom_height)
-        if (not args.debug):
-            bottom_pub = rospy.Publisher('bottom_raw_imgs', Image, queue_size=1)
+        if bottom_cam.isOpened():
+            bottom_cam.set(3, args.bottom_width)
+            bottom_cam.set(4, args.bottom_height)
+            if (not args.debug):
+                bottom_pub = rospy.Publisher('bottom_raw_imgs', Image, queue_size=1)
+        else:
+            print("No bottom camera detected!")
+
     
     img_counter = 0
 
@@ -36,7 +44,7 @@ def main():
 
     if (not args.no_save_images):
         save_dir = script_directory + '../saved_video/{}/'.format(datetime.datetime.now())
-        print(save_dir)
+        print("Logging Images to:\n" + save_dir)
         os.mkdir(save_dir)
 
     while not rospy.is_shutdown():
@@ -71,12 +79,14 @@ def main():
 
         img_counter += 1
 
-        if(args.show_video and (front_ret or bottom_ret)):
-            if not args.no_front:
+
+
+        if(args.show_video):
+            if not args.no_front and front_ret:
                 cv2.imshow("Sub_Front_Video", front_frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
-            if not args.no_bottom:
+            if not args.no_bottom and bottom_ret:
                 cv2.imshow("Sub_Bottom_Video", bottom_frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
