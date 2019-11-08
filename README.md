@@ -127,7 +127,7 @@ git submodule init && \
 git submodule update && \
 cd catkin_ws/src && \
 catkin_init_workspace && \
-atkin_make -j $(nproc) -C .. && \
+catkin_make -j $(nproc) -C .. && \
 source ~/.bashrc
 ```
 
