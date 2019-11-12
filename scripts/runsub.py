@@ -88,7 +88,7 @@ class SubSession():
             return video
 
     def start_network(self):
-        network_string = "python3 " + self.script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py --model ' + self.network_model_ + ' ' + self.no_save_images_
+        network_string = "python3 " + self.script_directory + '../submodules/network_wrapper/jetson_live_object_detection.py --model ' + self.network_model_ + ' ' + self.no_save_images_
         network_command = network_string.split()
     
         print(Fore.GREEN + 'starting Neural Network with command: ' + Fore.WHITE + network_string)
