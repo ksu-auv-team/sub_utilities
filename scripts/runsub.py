@@ -37,7 +37,7 @@ class SubSession():
         self.startup_processes.append(self.start_roscore())
         killswitch_start_sub = rospy.Subscriber("killswitch_run_start", Bool, self.killswitch_start_callback)
         killswitch_realtime_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_realtime_callback, queue_size=1)
-        
+
     # shut down child processes for restarting them cleanly or exiting
     def kill_children(self):
         self.curr_children
@@ -168,22 +168,26 @@ class SubSession():
             self.sub_is_killed = msg.data
         
 
-if __name__ == '__main__':
-    # Parse command line arguments:
-    parser = argparse.ArgumentParser(description="run the submarine")
-    parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
-    parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
-    parser.add_argument('-s', '--state-machine', default="QualifyStraightMachine", help="set name of state machine to use (default: %(default)s)")
-    parser.add_argument('-n', '--network-model', default="qual_2_rcnn_frozen", help="set name of neural network to use (default: %(default)s)")
-    parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
-    parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
-    parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
-    parser.add_argument('--no-save-images', action='store_const', default ='', const='--no-save-images', help='Will not record any video/pictures from the sub')
-    parser.add_argument('--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
-    parser.add_argument('--start-front-network', action='store_true', help='Will begin with the front neural network running')
-    parser.add_argument('--start-bottom-network', action='store_true', help='Will begin with the bottom neural network running')
-    args = parser.parse_args()
+def create_args():
+	# Parse command line arguments:
+	parser = argparse.ArgumentParser(description="run the submarine")
+	parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
+	parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
+	parser.add_argument('-s', '--state-machine', default="QualifyStraightMachine", help="set name of state machine to use (default: %(default)s)")
+	parser.add_argument('-n', '--network-model', default="qual_2_rcnn_frozen", help="set name of neural network to use (default: %(default)s)")
+	parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
+	parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
+	parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
+	parser.add_argument('--no-save-images', action='store_const', default ='', const='--no-save-images', help='Will not record any video/pictures from the sub')
+	parser.add_argument('--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
+	parser.add_argument('--start-front-network', action='store_true', help='Will begin with the front neural network running')
+	parser.add_argument('--start-bottom-network', action='store_true', help='Will begin with the bottom neural network running')
+	return parser.parse_args()
 
+if __name__ == '__main__':
+    # Create args
+    args = create_args()
+    
     # Wait for arduino to start
     time.sleep(3)
 
