@@ -12,7 +12,15 @@ from std_msgs.msg import Bool
 from colorama import Fore
 
 class SubSession():
-    def __init__(self, no_arduino=False):
+    def __init__(self, manual, state_machine, network_model, no_save_images, debug_execute, no_arduino=False):
+        #Arguments
+        self.manual = manual
+        self.state_machine = state_machine
+        self.network_model = network_model
+        self.no_save_images = no_save_images
+        self.debug_execute = debug_execute
+        self.no_arduino = no_arduino
+
         # Subprocesses:
         self.curr_children = []
         self.startup_processes = []
@@ -20,7 +28,7 @@ class SubSession():
         # Arduino variables
         self.delay_start = 0
         self.sub_is_killed = True
-        self.no_arduino = no_arduino
+        
 
         #keep logs from each start in a separate directory
         self.script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
@@ -73,7 +81,7 @@ class SubSession():
             return rc
 
     def start_video(self):
-        video_string = "python " + self.script_directory + "camera_node.py " + args.no_save_images
+        video_string = "python " + self.script_directory + "camera_node.py " + self.no_save_images
         video_command = video_string.split()
 
         print(Fore.GREEN + "starting video node with command: " + Fore.WHITE + video_string)
@@ -82,7 +90,7 @@ class SubSession():
             return video
 
     def start_network(self):
-        network_string = "python3 " + self.script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py --model ' + args.network_model + ' ' + args.no_save_images
+        network_string = "python3 " + self.script_directory + '../submodules/jetson_nano_inference/jetson_live_object_detection.py --model ' + self.network_model + ' ' + self.no_save_images
         network_command = network_string.split()
     
         print(Fore.GREEN + 'starting Neural Network with command: ' + Fore.WHITE + network_string)
@@ -100,7 +108,7 @@ class SubSession():
             return mv 
 
     def start_execute(self):
-        execute_string = 'python ' + self.script_directory + '../submodules/subdriver/execute_withState.py --machine ' + args.state_machine + ' ' + args.debug_execute
+        execute_string = 'python ' + self.script_directory + '../submodules/subdriver/execute_withState.py --machine ' + self.state_machine + ' ' + self.debug_execute
         execute_command = execute_string.split()
 
         print(Fore.GREEN + 'starting execute with command: ' + Fore.WHITE + execute_string)
@@ -119,6 +127,9 @@ class SubSession():
 
     #start ALL the things
     def start(self):     
+
+
+
         # Run the Video Node
         self.curr_children.append(self.start_video())
         
@@ -134,7 +145,7 @@ class SubSession():
             pass
 
         # Run Execute
-        if(args.manual):
+        if(self.manual):
             print('Manual Mode enabled, start your joystick node')
         else:
             self.curr_children.append(self.start_execute())
@@ -182,7 +193,7 @@ if __name__ == '__main__':
     time.sleep(3)
 
     # Create Subsession
-    go_sub_go = SubSession(args.no_arduino)
+    go_sub_go = SubSession(args.manual, args.state_machine, args.network_model, args.no_save_images, args.debug_execute, args.no_arduino)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
