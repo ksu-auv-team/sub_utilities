@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 import os
 import subprocess
@@ -47,6 +47,7 @@ class SubSession():
                 print(e)
         print("Done!")
 
+    # Kills the processes that are tied to startup_processes
     def kill_startup(self):
         print("Removing Startup Process...")
         for i in range(len(self.startup_processes)):
@@ -140,12 +141,14 @@ class SubSession():
              
         print('exiting start')
 
+    # This function captures the Ctrl+C and exits the function cleanly
     def signal_handler(self, sig, frame):
         print("\nCaptured Ctrl+C, stopping execution...")
         self.kill_children()
         self.kill_startup()
         sys.exit(0)
 
+    # This callback triggers on a CHANGE in the killswitch, so 0->1 or 1->0. It starts the process.
     def killswitch_start_callback(self, msg):
         if(msg.data):
             print('Starting Sub Runtime Processes')
@@ -154,7 +157,7 @@ class SubSession():
             print('Sub has been killed')
             self.kill_children()
             
-
+    # This killswitch triggers every time step from the arduino in real time.
     def killswitch_realtime_callback(self, msg):
             self.sub_is_killed = msg.data
         
@@ -181,9 +184,14 @@ if __name__ == '__main__':
     # Create Subsession
     go_sub_go = SubSession(args.no_arduino)
 
+    # captureing Ctrl+C
+    signal.signal(signal.SIGINT, go_sub_go.signal_handler)
+    
     # Ros init
     rospy.init_node("run_sub")
     
+    # By default, the State Machine is enabling/disabling the neural network on the front and bottom cameras
+    # Here, we can override that by enabling the front or bottom at the beginning
     if not args.no_network:
         if args.start_front_network:
             front_pub = rospy.Publisher('enable_front_network', Bool, queue_size=1)
@@ -191,18 +199,15 @@ if __name__ == '__main__':
         if args.start_bottom_network:
             bottom_pub = rospy.Publisher('enable_bottom_network', Bool, queue_size=1)
             bottom_pub.publish(True)
-
-    # captureing Ctrl+C
-    signal.signal(signal.SIGINT, go_sub_go.signal_handler)
     
-    # If we are running without an arduino hooked up, just run the start, don't listen()
+    # If we are running without an arduino hooked up, just run the start, don't wait for the killswitch to be pressed
     if args.no_arduino:
         if(not args.no_network):
             go_sub_go.startup_processes.append(go_sub_go.start_network())
         time.sleep(3)
         go_sub_go.start()
 
-    # If we do have an arduino hooked up, we need to forward the ROS stuff over
+    # If we do have an arduino hooked up, we need to forward the ROS stuff over and listen for the killswitch
     else:
         go_sub_go.startup_processes.append(go_sub_go.start_arduino())
         if(not args.no_network):
