@@ -12,14 +12,13 @@ from std_msgs.msg import Bool
 from colorama import Fore
 
 class SubSession():
-    def __init__(self, manual, state_machine, network_model, no_save_images, debug_execute, no_arduino=False):
+    def __init__(self, state_machine, network_model, no_save_images, debug_execute, manual=False):
         #Arguments
         self.manual = manual
         self.state_machine = state_machine
         self.network_model = network_model
         self.no_save_images = no_save_images
         self.debug_execute = debug_execute
-        self.no_arduino = no_arduino
 
         # Subprocesses:
         self.curr_children = []
@@ -193,7 +192,7 @@ if __name__ == '__main__':
     time.sleep(3)
 
     # Create Subsession
-    go_sub_go = SubSession(args.manual, args.state_machine, args.network_model, args.no_save_images, args.debug_execute, args.no_arduino)
+    go_sub_go = SubSession(args.state_machine, args.network_model, args.no_save_images, args.debug_execute, args.manual)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
