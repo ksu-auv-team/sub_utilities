@@ -133,13 +133,17 @@ source ~/.bashrc
 ```
 
 ### submarine\_msgs\_srvs
-TODO!!
+This stands for Submarine Messages and Services. Our system uses custom ROS messages to standardize some information being passed around. Most importantly, we use it to define the 'detections' we get from our neural network. To learn more about custom ROS messaegs, check out [their documentation](http://wiki.ros.org/ROS/Tutorials/CreatingMsgAndSrv).
+
+This repo also exists as a submodule of a few other repos to allow the user to only download the needed new information. 
 
 ## arduino
 The `arduino` directory holds the `.ino` files that should be loaded onto any onboard arduinos. For right now, we only have one to read in the killswitch position. These scripts use ROS in an arduino environment utilizing the `rosserial` packages. See the dependency section above to install these. 
 
 ## catkin_ws
-TODO!!!
+This is the repo's catkin workspace where we build our C++ code for talking to the pixhawk. If you don't know what a catkin workspace is, here is a brief description. 'Catkin' is the official build system of ROS and makes development in ROS easier than doing everything manually. It provides helpful commands to easily re-build, clean, and inspect your code as a whole. 
+
+While we don't usually do any more active development in this area, it's useful to have an understanding of what this build system is. Check out the [ros wiki](http://wiki.ros.org/catkin/conceptual_overview) for more details.
 
 ## logs & saved_video
 The `logs` directory is pretty straightforward. Whenever you run an instance of `runsub.py`, it creates a new time-stamped directory in the logs directory. This new folder holds a single file for each process that has been started. These should hold all the `stdout` and `stderr` for each process.
