@@ -98,18 +98,19 @@ In this repo, we have a few submodules currently:
  * **submarine\_msgs\_srvs** - TODO!!
 
 ### ncs-ros  
-TODO
+This is legacy stuff that we used when using the Intel Movidius, but don't use anymore. Feel free to poke around though.
 
 ### network\_wrapper
 The network wrapper repo is what is in charge of taking the images we publish out from the scripts above and running neural network inference on them. It then published back out both the new images with boxes drawn, and the actual detection information. 
 
 To use it for inference or training, you will need tensorflow installed on your system. There is a non-GPU-enabled version that's just called tensorflow. But we *Typically* want the GPU enabled one because it runs significantly faster. [Here's a link](https://www.tensorflow.org/install/gpu) to how to install tensorflow-gpu. Just be aware that it's not as simple as doing a `pip install`, you will need to install some CUDA enabled stuff and probably update your video drivers. It's a hastle, but a requirement to use the GPU enabled stuff. One word of advice, **really make sure you've got the right versions**. 
 
-### subdriver
-TODO!!
+### subdriver  
+Subdriver is what we use to run the main autonomy portion of the system. All of the state machine code, autonomy behaviors, and other things related to actually doing underwater tasks lies in here. This repo also has information on how to write new states and state machines for future development.
 
-### movement\_package
+Also, definately take a look at this repo to setup your networking configuration properly, because it's very confusing if you don't. 
 
+### movement\_package  
 If you haven't installed **ROS** by following the *ROS dependencies for subdriver* commands, do that first.
 
 Because the movement\_package is inside a catkin\_workspace, we need to initialize it a little bit differently than the others. Just run these commands:
@@ -144,3 +145,6 @@ TODO!!!
 The `logs` directory is pretty straightforward. Whenever you run an instance of `runsub.py`, it creates a new time-stamped directory in the logs directory. This new folder holds a single file for each process that has been started. These should hold all the `stdout` and `stderr` for each process.
 
 The `saved_video` directory is much the same. Whenever there is video being captured by the `camera_node.py` it will create a new time-stamped directory where it will save a percentage of the images (not actual video).
+
+## USB Peripherals
+TODO - Give info on how to write UDEV Rules
