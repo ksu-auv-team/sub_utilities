@@ -10,3 +10,6 @@
 [submodule "submodules/network_wrapper"]
 	path = submodules/network_wrapper
 	url = https://github.com/ksu-auv-team/network_wrapper.git
+[submodule "submodules/sub_vizualizer"]
+	path = submodules/sub_vizualizer
+	url = https://github.com/ksu-auv-team/sub_vizualizer.git
