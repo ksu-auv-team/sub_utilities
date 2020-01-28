@@ -26,7 +26,7 @@ class SubSession():
         
         # Arduino variables
         self.delay_start = 0
-        self.sub_is_killed = True
+        self.sub_is_killed = False
 
         #keep logs from each start in a separate directory
         self.script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
