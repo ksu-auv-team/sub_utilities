@@ -13,3 +13,6 @@
 [submodule "submodules/sub_vizualizer"]
 	path = submodules/sub_vizualizer
 	url = https://github.com/ksu-auv-team/sub_vizualizer.git
+[submodule "catkin_ws/src/submarine_msgs_srvs"]
+	path = catkin_ws/src/submarine_msgs_srvs
+	url = https://github.com/ksu-auv-team/submarine_msgs_srvs.git
