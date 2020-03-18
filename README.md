@@ -112,6 +112,13 @@ Subdriver is what we use to run the main autonomy portion of the system. All of 
 
 Also, definately take a look at this repo to setup your networking configuration properly, because it's very confusing if you don't. 
 
+Here are the dependencies listed for *Subdriver*:
+ * [ROS](http://wiki.ros.org/melodic/Installation/Ubuntu)
+ * [SMACH](http://wiki.ros.org/smach) (ROS Package)
+ 
+ To install ROS, checkout the above section on ROS dependencies or he ROS wiki. Once ROS is installed, you are then able to install ROS packages which are installed using the following syntax `sudo apt install ros-<distro>-<package>`. 
+ So, to install SMACH for melodic, you sould type `sudo apt install ros-melodic-smach`.
+
 ### movement\_package  
 If you haven't installed **ROS** by following the *ROS dependencies for subdriver* commands, do that first.
 
