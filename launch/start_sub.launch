@@ -1,0 +1,8 @@
+<launch>
+  <node name="execute" pkg="subdriver" type="execute_withState.py" />
+  <node name="network" pkg="network_wrapper" type="jetson_live_object_detection.py"/>
+  <!--node name="arduino" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyUSB0"/-->
+  <!--node name="movement" pkg="movement_package" type="manualmode.launch"-->
+  <!--node name="video" pkg="" type="camera_node.py" -->
+
+</launch>
