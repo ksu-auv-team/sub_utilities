@@ -1,0 +1,15 @@
+[submodule "src/sub_vizualizer"]
+	path = src/sub_vizualizer
+	url = https://github.com/ksu-auv-team/sub_vizualizer
+[submodule "src/network_wrapper"]
+	path = src/network_wrapper
+	url = https://github.com/ksu-auv-team/network_wrapper
+[submodule "src/submarine_msgs_srvs"]
+	path = src/submarine_msgs_srvs
+	url = https://github.com/ksu-auv-team/submarine_msgs_srvs
+[submodule "src/movement_package"]
+	path = src/movement_package
+	url = https://github.com/ksu-auv-team/movement_package
+[submodule "src/subdriver"]
+	path = src/subdriver
+	url = https://github.com/ksu-auv-team/subdriver
