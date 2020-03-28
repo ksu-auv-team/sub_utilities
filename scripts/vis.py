@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 import cv2
 import rospy
 from sensor_msgs.msg import Image
