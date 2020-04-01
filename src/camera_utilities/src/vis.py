@@ -51,7 +51,7 @@ if __name__ == "__main__":
             rospy.Subscriber('bottom_raw_imgs', Image, bottom_raw_img_callback, queue_size=1)
     
     if(not args.raw and not args.network):
-        print("Please specify -r for raw images, -n for network images, or both to display both")
+        rospy.loginfo("Please specify -r for raw images, -n for network images, or both to display both")
         exit()
 
     rospy.init_node('vis_node', anonymous=True)

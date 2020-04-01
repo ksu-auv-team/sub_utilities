@@ -29,7 +29,7 @@ def main():
 
     for filename in os.listdir(img_dir):
         image = cv2.imread(os.path.join(img_dir, filename))
-        print(filename)
+        rospy.loginfo(filename)
 
         msg = bridge.cv2_to_imgmsg(image)
         pub.publish(msg)
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     args = parser.parse_args(rospy.myargv()[1:])
 
     if args.fps == 0 and not args.show_video:
-        print("Cannot use 0 FPS without -v")
+        rospy.loginfo("Cannot use 0 FPS without -v")
         exit()
 
     main()

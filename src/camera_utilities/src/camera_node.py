@@ -22,7 +22,7 @@ def main():
             if (not args.debug):
                 front_pub = rospy.Publisher('front_raw_imgs', Image, queue_size=1)
         else:
-            print("No front camera detected!")
+            rospy.loginfo("No front camera detected!")
             
 
     if not args.no_bottom:
@@ -33,7 +33,7 @@ def main():
             if (not args.debug):
                 bottom_pub = rospy.Publisher('bottom_raw_imgs', Image, queue_size=1)
         else:
-            print("No bottom camera detected!")
+            rospy.loginfo("No bottom camera detected!")
 
     
     img_counter = 0
@@ -44,7 +44,7 @@ def main():
 
     if (not args.no_save_images):
         save_dir = script_directory + '../saved_video/{}/'.format(datetime.datetime.now())
-        print("Logging Images to:\n" + save_dir)
+        rospy.loginfo("Logging Images to:\n" + save_dir)
         os.mkdir(save_dir)
 
     while not rospy.is_shutdown():
@@ -71,11 +71,11 @@ def main():
             if not args.no_front and front_ret:
                 front_msg = bridge.cv2_to_imgmsg(front_frame)
                 front_pub.publish(front_msg)
-                print("publishing front {}".format(img_counter))
+                rospy.loginfo("publishing front {}".format(img_counter))
             if not args.no_bottom and bottom_ret:
                 bottom_msg = bridge.cv2_to_imgmsg(bottom_frame)
                 bottom_pub.publish(bottom_msg)
-                print("publishing bottom {}".format(img_counter))
+                rospy.loginfo("publishing bottom {}".format(img_counter))
 
         img_counter += 1
 
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     args = parser.parse_args(rospy.myargv()[1:])
 
     if args.no_front and args.no_bottom:
-        print("You must use at least one camera!")
+        rospy.loginfo("You must use at least one camera!")
         exit()
 
     main()
