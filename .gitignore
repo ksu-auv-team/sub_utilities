@@ -137,3 +137,6 @@ catkin_ws/src/CMakeLists.txt
 # devel and build
 devel/
 build/
+
+# VSCode
+.vscode

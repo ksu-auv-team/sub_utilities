@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--start-networks', action='store_true', help='Send start message on enable network topic')
     parser.add_argument('--no-front', action='store_true', help='Will not view the front camera')
     parser.add_argument('--no-bottom', action='store_true', help='Will not view the bottom camera')
-    args = parser.parse_args()
+    args = parser.parse_args(rospy.myargv()[1:])
 
     if(args.network):
         if not args.no_front:

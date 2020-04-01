@@ -114,7 +114,7 @@ if __name__ == "__main__":
     parser.add_argument('--bottom-height', default=420, type=int, help='Set the bottom video capture height for your camera in pixels')
     parser.add_argument('--front-width', default=860, type=int, help='Set the front video capture width for your camera in pixels')
     parser.add_argument('--bottom-width', default=860, type=int, help='Set the bottom video capture width for your camera in pixels')
-    args = parser.parse_args()
+    args = parser.parse_args(rospy.myargv()[1:])
 
     if args.no_front and args.no_bottom:
         print("You must use at least one camera!")

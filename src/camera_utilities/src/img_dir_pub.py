@@ -56,7 +56,7 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--topic', type=int, default='0', help='int representing topic to publish images to. 0 is front cam, 1 is bottom cam.s')
     parser.add_argument('-f', '--fps', type=int, default='10', help='number of frames per second to publish. Entering 0 with -v will set opencv to continue/publish only on a keypress. Default is 10.')
     parser.add_argument('-s', '--shuffle', action='store_true', help='shuffle images')
-    args = parser.parse_args()
+    args = parser.parse_args(rospy.myargv()[1:])
 
     if args.fps == 0 and not args.show_video:
         print("Cannot use 0 FPS without -v")
