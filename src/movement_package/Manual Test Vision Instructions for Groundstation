@@ -1,0 +1,14 @@
+tky
+
+rosrun yolo compressed_repeater /left/image_raw
+
+when pixhawk is connected on the other port
+roslaunch mavros apm2.launch fcu_url:=/dev/ttyACM1:57600
+or force eonnction to port 1
+roslaunch mavros apm2.launch fcu_url:=/dev/ttyACM0:57600
+
+
+compressed image viewer on ground
+
+rosrun yolo compressed_viewer /left/image_rect_color/jpegbuffer
+

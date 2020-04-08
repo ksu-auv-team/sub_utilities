@@ -1,0 +1,8 @@
+<launch>
+	<!--START PIXHAWK-->
+	<include file="$(find mavros)/launch/apm2.launch"/>
+
+	<!--START MANUAL CONTROL NODE-->
+    <node name="manual_control_node" pkg="movement_package" type="manual_control_node" output="screen"/>>
+ 
+</launch>

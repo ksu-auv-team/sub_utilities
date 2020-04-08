@@ -1,0 +1,2 @@
+#ignore config file from git. One will be generated upon running
+config.txt
