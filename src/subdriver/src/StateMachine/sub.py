@@ -442,6 +442,38 @@ class Sub(smach.State):
         #changes go here
         self.joy_pub.publish(msg) 
 
+
+    def gui_talker():
+		#from StateMachine import gbl
+		status = Sub_status()
+		print('ayy lmao')
+		gbl.depth = 0
+		rospy.init_node('sub_gbl')
+		status_pub = rospy.Publisher('sub_gbl', Sub_status, queue_size = 1)
+		rate = rospy.Rate(5)
+		while not rospy.is_shutdown():
+			#from StateMachine import gbl
+			# if gbl.run_start_time is not None:
+			#     status.run_start_time = str(gbl.run_start_time
+			# else:
+			#     status.run_start_time = 'poop'
+			status.depth = str(gbl.depth) #current depth in meters
+			status.init_depth = str(gbl.init_depth) #depth at beginning of run - should be near 0
+			status.heading = str(gbl.heading) #current compass heading in degrees from 0-360
+			status.init_heading = str(gbl.init_heading) #compass heading at beginning of run
+			status.state_heading = str(gbl.state_heading)
+			status.detections_front = str(gbl.detections_front) #list of detections from the front camera that will be filled by the neural network
+			status.num_detections_front = str(gbl.num_detections_front) #why would we not just use len(detections)?
+			status.detections_bottom = str(gbl.detections_bottom) #list of detections from the bottom camera that will be filled by the neural network
+			status.num_detections_bottom = str(gbl.num_detections_bottom) #why would we not just use len(detections)?
+			status.current_target = str(gbl.current_target) #the current object being targeted TODO: allow multiple targets
+			status.surfacing = str(gbl.surfacing)
+			status.debug = str(gbl.debug)
+			
+			#gbl.depth = gbl.depth + 0.1
+			status_pub.publish(status)
+			rate.sleep()
+
     # These get set at the start of each state, allowing the user to call them as needed
     current_state_start_time = None
     current_state_start_depth = None
@@ -463,4 +495,7 @@ class Sub(smach.State):
 
     active_launcher = 'LAUNCHER_LEFT'
     active_launcher_offset = const.LAUNCHER_LEFT_OFFSET
+
+    if args.gui:
+        gui_talker()
 

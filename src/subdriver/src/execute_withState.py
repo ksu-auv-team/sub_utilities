@@ -23,6 +23,7 @@ parser.add_argument('-m', '--machine', default="BaseStateMachine", help="the nam
 parser.add_argument('-d', '--debug', action="store_true", help='Launches in debug mode. Will try to go through entire state machine.')
 parser.add_argument('-l', '--list', action="store_true", help="List the available state machines.")
 parser.add_argument('-a', '--arbitrary', default=None, help="Provide module path to the state that you want to test including the Class Name. EX: --arbitrary StateMachine.taskless.dumb_start.Dumb_Start")
+parser.add_argument('-g', '--gui', action="store_true", help="Run the GUI!")
 args = parser.parse_args(rospy.myargv()[1:])
 
 states = {
