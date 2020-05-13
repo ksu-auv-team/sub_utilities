@@ -140,3 +140,8 @@ build/
 
 # VSCode
 .vscode
+
+# simulation items
+*.bin
+*.parm
+*.tlog*
