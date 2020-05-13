@@ -22,18 +22,20 @@ import roslaunch
 from std_msgs.msg import Bool
 
 class SubSession():
-    def __init__(self, state_machine, network_model, no_save_images, debug_execute, manual=False):
+    def __init__(self, state_machine, network_model, no_save_images, debug_execute, manual=False, simulated=False):
         #Arguments
         self.manual_ = manual
         self.state_machine_ = state_machine
         self.network_model_ = network_model
         self.no_save_images_ = no_save_images
         self.debug_execute_ = debug_execute
+        self.simulated = simulated
 
         # Subprocesses:
         self.launcher = roslaunch.scriptapi.ROSLaunch()
         self.launcher.start()
         self.movement_node = None
+        self.simulation_process = None
         self.curr_children = []
         self.startup_processes = []
         
@@ -81,6 +83,13 @@ class SubSession():
                     proc.kill()
             except Exception as e:
                 print(e)
+
+        # Attempt to kill the simulator
+        if self.simulation_process is not None:
+            try:
+                self.simulation_process.kill()
+            except Exception as e:
+                print(e)
         
         print("Removed Startup Process!")
 
@@ -118,7 +127,15 @@ class SubSession():
         # Get a reference to the launch file
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         roslaunch.configure_logging(uuid)
-        movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/manualmode.launch"])
+        if(not self.simulated):
+            movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/manualmode.launch"])
+        else:
+            simulation_string = "sim_vehicle.py -v ArduSub -L Transdec --map --console"
+            simulation_commands = simulation_string.split()
+            self.simulation_process = subprocess.Popen(simulation_commands, stdout=subprocess.PIPE)
+            time.sleep(10) # Wait for the simulator to start up
+            movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/simulated_mode.launch"])
+        
         movement_launch.start()
 
         # return that reference
@@ -165,7 +182,7 @@ class SubSession():
         self.movement_node = self.start_movement()
 
         self.delay_start = time.time() # The time we will compare our arduino time to
-        while(time.time() - self.delay_start < 10 and not self.sub_is_killed):
+        while(time.time() - self.delay_start < 25 and not self.sub_is_killed):
             pass
 
         # Run Execute
@@ -219,12 +236,11 @@ class SubSession():
 def create_args():
 	# Parse command line arguments:
 	parser = argparse.ArgumentParser(description="run the submarine")
-	parser.add_argument('-i', '--internet-address', help="override default hostname or ip address for remote computer (not currently functional)")
 	parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
 	parser.add_argument('-s', '--state-machine', default="QualifyStraightMachine", help="set name of state machine to use (default: %(default)s)")
 	parser.add_argument('-n', '--network-model', default="qual_2_rcnn_frozen", help="set name of neural network to use (default: %(default)s)")
-	parser.add_argument('-v', '--verbosity', help="set logging verbosity (doesn't work)")
 	parser.add_argument('-d', '--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
+	parser.add_argument('--simulate', action='store_true', help='Will also start the simulator node instead of being hooked up to hardware')
 	parser.add_argument('--no-arduino', action='store_true', help='Runs the sub without running any physical arduino hardware.')
 	parser.add_argument('--no-network', action='store_true', help='Runs the sub without running the neural network')
 	parser.add_argument('--no-save-images', action='store_const', default ='', const='--no-save-images', help='Will not record any video/pictures from the sub')
@@ -241,7 +257,7 @@ if __name__ == '__main__':
     time.sleep(3)  # wait a bit to be sure the roscore is really launched
 
     # Create Subsession
-    go_sub_go = SubSession(args.state_machine, args.network_model, args.no_save_images, args.debug_execute, args.manual)
+    go_sub_go = SubSession(args.state_machine, args.network_model, args.no_save_images, args.debug_execute, args.manual, args.simulate)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
