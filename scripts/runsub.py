@@ -22,10 +22,11 @@ import roslaunch
 from std_msgs.msg import Bool
 
 class SubSession():
-    def __init__(self, state_machine, network_model, no_save_images, debug_execute, manual=False, simulated=False):
+    def __init__(self, state_machine, arbitrary_machine, network_model, no_save_images, debug_execute, manual=False, simulated=False):
         #Arguments
         self.manual_ = manual
         self.state_machine_ = state_machine
+        self.arbitrary_machine_ = arbitrary_machine
         self.network_model_ = network_model
         self.no_save_images_ = no_save_images
         self.debug_execute_ = debug_execute
@@ -147,7 +148,13 @@ class SubSession():
         # Get a node reference
         package = 'subdriver'
         executable = 'execute_withState.py'
-        execute = roslaunch.core.Node(package, executable, args="--machine " + self.state_machine_ + " " + self.debug_execute_)
+        arg_string = "--machine " + self.state_machine_ + " " + self.debug_execute_
+
+        # Add on the arbitrary machine that will override the regular state machine
+        if (self.arbitrary_machine_):
+            arg_string += " -a " + self.arbitrary_machine_
+
+        execute = roslaunch.core.Node(package, executable, args=arg_string)
 
         # Launch the node
         execute_node = self.launcher.launch(execute)
@@ -238,6 +245,7 @@ def create_args():
 	parser = argparse.ArgumentParser(description="run the submarine")
 	parser.add_argument('-m', '--manual', action='store_true', help="Will not run state machine")
 	parser.add_argument('-s', '--state-machine', default="QualifyStraightMachine", help="set name of state machine to use (default: %(default)s)")
+	parser.add_argument('-a', '--arbitrary-machine', default="", help="Run an arbitrary state (This will override --state-machine). Pass in the Python Import structure as if it were being run from subdriver. EX: StateMachine.taskless.dumb_start.Dumb_Start")
 	parser.add_argument('-n', '--network-model', default="qual_2_rcnn_frozen", help="set name of neural network to use (default: %(default)s)")
 	parser.add_argument('-d', '--debug-execute', action='store_const', default='', const='--debug', help='Will run execute with the debug flag')
 	parser.add_argument('--simulate', action='store_true', help='Will also start the simulator node instead of being hooked up to hardware')
@@ -257,7 +265,7 @@ if __name__ == '__main__':
     time.sleep(3)  # wait a bit to be sure the roscore is really launched
 
     # Create Subsession
-    go_sub_go = SubSession(args.state_machine, args.network_model, args.no_save_images, args.debug_execute, args.manual, args.simulate)
+    go_sub_go = SubSession(args.state_machine, args.arbitrary_machine, args.network_model, args.no_save_images, args.debug_execute, args.manual, args.simulate)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
