@@ -13,7 +13,18 @@ class NoahTestSpin(Sub):
     def execute(self, userdata):
         self.init_state()
 
-        rospy.loginfo("wow")
+        gbl.state_heading = gbl.heading
+        msg = self.init_joy_msg()
+
+        msg.axes[const.AXES['rotate']] = -0.5
+
+        rospy.loginfo("just trying to spin")
+        while(1):
+            self.publish_joy(msg)
+
+
+
+        
         print("wow")
 
         return 'through_gate'
