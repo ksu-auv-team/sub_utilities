@@ -30,10 +30,9 @@ class NoahTestSpin(Sub):
         msg = self.init_joy_msg()
 
         #magnitude is the hypot
-        magnitude = .07
+        magnitude = 0.3
 
-        msg.axes[const.AXES['rotate']] = -0.2
-
+        msg.axes[const.AXES['rotate']] = -0.3
         rospy.loginfo("just trying to spin")
         while(1):
             #Idk which heading to use RIP
@@ -41,12 +40,14 @@ class NoahTestSpin(Sub):
             if angle < 0:
                   angle += 360
             rospy.loginfo("Angle " + str(angle))
+            rospy.loginfo("Radian " + str(math.radians(angle)))
             frontback = self.calc_frontback(angle, magnitude)
             strafe = self.calc_strafe(angle, magnitude)
             rospy.loginfo("FB " + str(frontback))
             rospy.loginfo("strafe " + str(strafe))
-            msg.axes[const.AXES['frontback']] = frontback
             msg.axes[const.AXES['strafe']] = strafe
+            msg.axes[const.AXES['frontback']] = frontback
+            
             #rospy.loginfo(magnitude)
             self.publish_joy(msg)
 
