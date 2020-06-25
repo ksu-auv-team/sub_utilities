@@ -36,6 +36,7 @@ class NoahTestSpin(Sub):
 
         rospy.loginfo("just trying to spin")
         while(1):
+            #Idk which heading to use RIP
             angle = self.angle_diff(gbl.init_heading, gbl.heading)
             frontback = self.calc_frontback(angle)
             strafe = self.calc_strafe(angle)
