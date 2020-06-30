@@ -18,7 +18,7 @@ class Straight_Ahead(Sub):
         
         while rospy.get_time() < (self.current_state_start_time + 40):
             msg.axes[const.AXES['frontback']] = 0.4
-            self.publish(msg)
+            self.publish_joy(msg)
             rospy.sleep(const.SLEEP_TIME)
 
         rospy.loginfo('done')

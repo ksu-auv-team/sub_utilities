@@ -47,7 +47,7 @@ class Track_Torpedo(Sub):
                 return 'target_locked'
             jmsg.axes[const.AXES['strafe']] = x_pid.Update(x)
             jmsg.axes[const.AXES['vertical']] = z_pid.Update(z)
-            self.publish(jmsg)
+            self.publish_joy(jmsg)
 
 
     def log(self):

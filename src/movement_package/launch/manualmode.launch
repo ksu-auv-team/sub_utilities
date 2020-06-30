@@ -1,6 +1,6 @@
 <launch>
 	<!--START PIXHAWK-->
-	<include file="$(find mavros)/launch/apm2.launch">
+	<include file="$(find mavros)/launch/apm2.launch" respawn="true">
             <!-- Override /dev location -->
             <arg name="fcu_url" value="/dev/pixhawk:57600" />
     </include>

@@ -46,18 +46,18 @@ class Track_Buoy(Sub):
         rospy.loginfo("matchBuoyDepth: Adjusting depth")
         
         msg.axes[const.AXES['vertical']] = PID().update(self.get_center(gbl.detections_front[self.findBoxNumber()])[1])
-        self.publish(msg)
+        self.publish_joy(msg)
         rospy.sleep(const.SLEEP_TIME)
-        self.publish(msg)
+        self.publish_joy(msg)
 
     def matchBuoyStrafe(self):
         rospy.loginfo("matchBuoyStrafe: Adjusting left to right")
         msg.axes[const.AXES['strafe']] = PID().update(self.get_center(gbl.boxes[self.findBoxNumber()])[0])
-        self.publish(msg)
+        self.publish_joy(msg)
         rospy.sleep(const.SLEEP_TIME)
         # Stop rotating
         msg.axes[const.AXES['strafe']] = 0
-        self.publish(msg)
+        self.publish_joy(msg)
     
     def moveCloseToBuoy(self):
         rospy.loginfo("moveCloseToBuoy: Moving close to buoy")# While the image width of buoy is less than 0.75

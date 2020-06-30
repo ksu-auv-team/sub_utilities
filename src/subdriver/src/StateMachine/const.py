@@ -23,7 +23,7 @@ Usage:
 
     jmsg = Sub.init_joy_msg()
     jmsg[AXES['frontback']] = 1.0
-    Sub.joy_pub.publish(jmsg)
+    Sub.publish_joy(jmsg)
 
   2) Pressing a button:
     from constants import BUTTONS
@@ -31,10 +31,10 @@ Usage:
 
     jmsg = Sub.init_joy_msg()
     jmsg[BUTTONS['x']] = 1
-    Sub.joy_pub.publish(jmsg)
+    Sub.publish_joy(jmsg)
     time.sleep(DEBOUNCE_DELAY)
     jmsg[BUTTONS['x']] = 0
-    Sub.joy_pub.publish(jmsg)
+    Sub.publish_joy(jmsg)
 
 
 '''

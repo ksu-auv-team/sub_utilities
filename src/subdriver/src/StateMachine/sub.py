@@ -90,6 +90,7 @@ class Sub(smach.State):
         if gbl.run_start_time:
             self.current_state_start_time = rospy.get_time()
             self.current_state_start_depth = gbl.depth
+            gbl.state_heading = gbl.heading
             self.use_front_network(False)
             self.use_bottom_network(False)
             self.log()
@@ -386,23 +387,6 @@ class Sub(smach.State):
             self.active_launcher_offset = None
             return
 
-    def publish(self, msg):
-        '''
-        Publish a joy message with joy_pub.
-        This exists to let us modify all messages in one place before they're published,
-        e.g. to stop all forward motion, speed up all rotation, or mirror all horizontal motion.
-        '''
-
-        #modifiers go here
-
-        #mirror run
-        if (const.FLIP_RUN):
-            msg.axes["strafe"] = msg.axes["strafe"] * -1
-            msg.axes["rotate"] = msg.axes["rotate"] * -1
-
-        #publish message
-        self.joy_pub.publish(msg)
-
     def angle_diff(self, source, target):
         '''
         Returns the difference between the two angles. Wraps around so that, e.g.,
@@ -430,10 +414,16 @@ class Sub(smach.State):
             msg: ROS joystick message
         '''
 
-        #msg['frontback'] = msg['frontback'] * 0.9
+        # Add Modifiers
+        # EX: msg['frontback'] = msg['frontback'] * 0.9
 
         if gbl.debug:
             pass
+
+        #mirror run
+        if (const.FLIP_RUN):
+            msg.axes["strafe"] = msg.axes["strafe"] * -1
+            msg.axes["rotate"] = msg.axes["rotate"] * -1
 
         #limit depth
         elif (not gbl.surfacing and self.get_depth() < 0.5 and msg.axes[const.AXES['vertical']] > 0):

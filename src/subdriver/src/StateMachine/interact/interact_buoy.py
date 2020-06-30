@@ -62,7 +62,7 @@ class Interact_Buoy(Sub):
         
         while rospy.Time.now() < startTime + 10000: # Move for 10 seconds
             msg.axes[const.AXES['forward']] = 1
-            self.publish(msg)
+            self.publish_joy(msg)
             rospy.sleep(const.SLEEP_TIME)
         
         msg.axes[const.AXES['forward']] = 0

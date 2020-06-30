@@ -17,7 +17,7 @@ class Interact_Gate(Sub):
         rospy.loginfo("Charging forward for 5 seconds")
         
         while rospy.get_time() < (self.current_state_start_time + 5):
-            self.publish(msg)
+            self.publish_joy(msg)
             rospy.sleep(const.SLEEP_TIME)
 
         gbl.current_target = const.CLASSES['pole']

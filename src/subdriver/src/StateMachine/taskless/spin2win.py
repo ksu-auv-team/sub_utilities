@@ -17,7 +17,7 @@ class SpinToWin(Sub):
         rospy.loginfo('Charging forward for 3 seconds')
         
         while rospy.get_time() < (self.current_state_start_time + 3):
-            self.publish(msg)
+            self.publish_joy(msg)
             rospy.sleep(const.SLEEP_TIME)
 
         rospy.loginfo('720noscope')
@@ -35,7 +35,7 @@ class SpinToWin(Sub):
         second_start_time = rospy.get_time()
         rospy.loginfo('Charging forward for three more seconds')
         while rospy.get_time() < (second_start_time + 3):
-            self.publish(msg)
+            self.publish_joy(msg)
             rospy.sleep(const.SLEEP_TIME)
 
         return 'through_gate'

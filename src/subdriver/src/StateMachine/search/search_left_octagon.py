@@ -21,7 +21,7 @@ class Search_Left_Octagon(Sub):
         #return 'object_not_found' # Debug purposes only!
 
         while(1):
-            self.joy_pub.publish(msg)
+            self.publish_joy(msg)
             #will need to change this to multiple targets
             if self.get_box_of_class(gbl.detections_bottom, gbl.current_target):
                 if self.search_frames_seen <= 2:
