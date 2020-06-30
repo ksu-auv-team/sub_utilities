@@ -11,15 +11,16 @@ class NoahTestSpin(Sub):
     def __init__(self):
         smach.State.__init__(self, outcomes=['through_gate'])
 
+
+    #Takes the difference in angles and finds the frontback component
     def calc_frontback(self, angle, magnitude):
         frontback = 0.0
-        #CAH
         frontback = math.cos(math.radians(angle)) * magnitude
         return frontback
 
+    #Takes the difference in angles and finds the strafe component
     def calc_strafe(self, angle, magnitude):
         strafe = 0.0
-        #SOH
         strafe = math.sin(math.radians(angle)) * magnitude
         return strafe
     
@@ -28,32 +29,29 @@ class NoahTestSpin(Sub):
     def execute(self, userdata):
         self.init_state()
 
-        initial_heading = gbl.init_heading
-
         gbl.state_heading = gbl.heading
         msg = self.init_joy_msg()
 
-        #magnitude is the hypot
-        magnitude = .1
+        #Used to calculate FB/strafe, should be how fast the sub goes in the calculated directions
+        magnitude = .4
 
-        msg.axes[const.AXES['rotate']] = -.1
-        rospy.loginfo("just trying to spin")
-        while(1):
-            #Idk which heading to use RIP
-            angle = self.angle_diff(gbl.init_heading, gbl.heading)
+        #Rotate speed
+        msg.axes[const.AXES['rotate']] = -.4
 
+        while(rospy.get_time() - self.current_state_start_time) > 10):
+            #calculates the difference between the init heading at the start of the state
+            # and the current heading as the sub rotates
+            angle = self.angle_diff(gbl.state_heading, gbl.heading)
+            if angle < 0:
+                angle += 360
 
+            rospy.loginfo("Angle Difference " + str(angle))
 
-            rospy.loginfo("Angle " + str(angle))
-            #rospy.loginfo("Radian " + str(math.radians(angle)))
             frontback = self.calc_frontback(angle, magnitude)
             strafe = self.calc_strafe(angle, magnitude)
-            rospy.loginfo("FB " + str(frontback))
-            rospy.loginfo("strafe " + str(strafe))
             msg.axes[const.AXES['strafe']] = strafe
             msg.axes[const.AXES['frontback']] = frontback
             
-            #rospy.loginfo(magnitude)
             self.publish_joy(msg)
 
             rospy.sleep(const.SLEEP_TIME)
