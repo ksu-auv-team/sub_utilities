@@ -4,8 +4,8 @@ from StateMachine.sub import *
 import math
 
 
-#defines test state
-class NoahTestSpin(Sub):
+#Sub will move forward while rotating in place
+class SpinForward(Sub):
 
     #This gives the list of outcomes from this state
     def __init__(self):
@@ -38,7 +38,7 @@ class NoahTestSpin(Sub):
         #Rotate speed
         msg.axes[const.AXES['rotate']] = -.4
 
-        while(rospy.get_time() - self.current_state_start_time) > 10):
+        while(rospy.get_time() - self.current_state_start_time < 10):
             #calculates the difference between the init heading at the start of the state
             # and the current heading as the sub rotates
             angle = self.angle_diff(gbl.state_heading, gbl.heading)
