@@ -12,7 +12,7 @@ import StateMachine.machines.TestTrackMachine as testtrack
 import StateMachine.machines.TestArbitraryMachine as arb
 
 #added Test Machine
-import StateMachine.machines.NoahTestMachine as ntt
+import StateMachine.machines.PidTestMachine as pid
 
 # Global values updated in real time
 import StateMachine.gbl as gbl
@@ -35,7 +35,7 @@ states = {
     'QualifyStraightMachine': dumbqualify.createStateMachine,
     'TestTrackMachine': testtrack.createStateMachine,
     #added in state
-    'NoahTestMachine': ntt.creatStateMachine
+    'PidTestMachne': pid.createStateMachine
 }
 
 def main():

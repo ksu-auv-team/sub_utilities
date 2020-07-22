@@ -38,6 +38,11 @@ class SpinForward(Sub):
         #Rotate speed
         msg.axes[const.AXES['rotate']] = -.4
 
+        unitConversion = 1/360
+        kp = 0.5
+
+        rospy.loginfo("start")
+        
         while(rospy.get_time() - self.current_state_start_time < 10):
             #calculates the difference between the init heading at the start of the state
             # and the current heading as the sub rotates
@@ -51,10 +56,21 @@ class SpinForward(Sub):
             strafe = self.calc_strafe(angle, magnitude)
             msg.axes[const.AXES['strafe']] = strafe
             msg.axes[const.AXES['frontback']] = frontback
-            
             self.publish_joy(msg)
 
             rospy.sleep(const.SLEEP_TIME)
+
+        rospy.loginfo("fixing position")
+        error = angle * unitConversion
+        output = kp*error
+        msg.axes[const.AXES['strafe']] = 0
+        msg.axes[const.AXES['frontback']] = 0
+        while(gbl.heading != gbl.state_heading):
+            msg.axes[const.AXES['rotate']] = output
+            self.publish_joy(msg)
+            rospy.sleep(const.SLEEP_TIME)
+        
+
             
     
 
