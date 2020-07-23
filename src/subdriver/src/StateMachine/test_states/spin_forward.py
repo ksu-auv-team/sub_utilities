@@ -38,8 +38,8 @@ class SpinForward(Sub):
         #Rotate speed
         msg.axes[const.AXES['rotate']] = -.4
 
-        unitConversion = 1/360
-        kp = 0.5
+        unitConversion = 1.0/360.0
+        kp = 3
 
         rospy.loginfo("start")
         
@@ -61,11 +61,19 @@ class SpinForward(Sub):
             rospy.sleep(const.SLEEP_TIME)
 
         rospy.loginfo("fixing position")
-        error = angle * unitConversion
-        output = kp*error
         msg.axes[const.AXES['strafe']] = 0
         msg.axes[const.AXES['frontback']] = 0
         while(gbl.heading != gbl.state_heading):
+            angle = self.angle_diff(gbl.state_heading, gbl.heading)
+            if angle < 0:
+                angle += 360
+
+            if output > 0.8:
+                output = 0.8
+            elif output < -0.8
+                output = -0.8
+            error = angle * unitConversion
+            output = kp*error
             msg.axes[const.AXES['rotate']] = output
             self.publish_joy(msg)
             rospy.sleep(const.SLEEP_TIME)
