@@ -23,6 +23,13 @@ class SpinForward(Sub):
         strafe = 0.0
         strafe = math.sin(math.radians(angle)) * magnitude
         return strafe
+    def calc_error(self):
+        error = self.angle_diff(gbl.heading, gbl.state_heading)
+        if(error > 0):
+            error = 0 - error
+        elif(error < 0):
+            error = abs(error)
+        return error
     
 
 
@@ -55,7 +62,24 @@ class SpinForward(Sub):
             self.publish_joy(msg)
 
             rospy.sleep(const.SLEEP_TIME)
-            
-    
+        msg.axes[const.AXES['strafe']] = 0.0
+        msg.axes[const.AXES['frontback']] = 0.0
+        self.publish_joy(msg)
+        
+        rospy.loginfo("Reseting Position")
+        output = 0.0 
+        while(gbl.heading != gbl.state_heading):
+            error = self.calc_error()
+            error = error * 0.004444
+            if(error > -0.1 and error < 0.0):
+                error = -0.1
+            if(error < 0.1 and error > 0.0):
+                error = 0.1
+            msg.axes[const.AXES['rotate']] = error
+            self.publish_joy(msg)
+            rospy.sleep(const.SLEEP_TIME)
+        msg.axes[const.AXES['rotate']] = 0.0
+        self.publish_joy(msg)
+        rospy.loginfo("Finished Run")
 
         return 'through_gate'
