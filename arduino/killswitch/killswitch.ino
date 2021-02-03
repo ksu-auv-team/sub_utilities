@@ -13,6 +13,7 @@ bool curr_val = false;
 
 void setup() {
     // Starut Nodes
+    nh.getHardware()->setBaud(57600);
     nh.initNode();
     nh.advertise(killswitch_status_pub);
     nh.advertise(killswitch_start_pub);

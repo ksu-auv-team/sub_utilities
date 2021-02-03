@@ -168,7 +168,7 @@ class SubSession():
         # Get a node reference
         package = 'rosserial_python'
         executable = 'serial_node.py'
-        arduino = roslaunch.core.Node(package, executable, args="/dev/arduino_0")
+        arduino = roslaunch.core.Node(package, executable, args='_port:=/dev/arduino_0 _baud:=57600')
 
         # Launch the node
         arduino_node = self.launcher.launch(arduino)
