@@ -4,7 +4,7 @@ sudo pip3 install Cython contextlib2 pillow lxml matplotlib
 sudo pip3 install pycocotools
 
 echo "Installing TF TRT Models"
-git clone --recursive https://github.com/NVIDIA-Jetson/tf_trt_models.git
+git clone --recursive https://github.com/CoryBorek/tf_trt_models.git
 cd tf_trt_models
 
 sudo sh install.sh python3
