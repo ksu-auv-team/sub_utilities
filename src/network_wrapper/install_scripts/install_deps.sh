@@ -13,13 +13,5 @@ sudo pip3 install protobuf==3.6.1
 sudo pip3 install tqdm
 sudo pip3 install sklearn
 
-sudo pip3 install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v42 tensorflow-gpu==1.13.1+nv19.4
-sudo pip3 install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v43 tensorflow-gpu==1.15.0+nv20.1
-
-
-sudo pip3 install protobuf==3.6.1
-sudp pip3 install tqdm
-sudo pip3 install sklearn
-
-sudo pip3 install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v42 tensorflow-gpu==1.13.1+nv19.4
-
+sudo pip3 install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v42 tensorflow_gpu==1.13.1+nv19.4
+sudo pip3 install --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v43 tensorflow_gpu==1.15.0+nv20.1
