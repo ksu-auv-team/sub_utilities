@@ -15,8 +15,8 @@ class Forward(Sub):
     
     # for 5 seconds, go forward at wahtever magnitude 
 		while(rospy.get_time() - self.current_state_start_time < 5):
-			rospy.loginfo("strafing left')
-			msg.axes[const.AXES['frontback']] =  frontback_magnitude
+			rospy.loginfo("GOING FORWARD')
+			msg.axes[const.AXES['frontback']] = frontback_magnitude
 			self.publish(msg)
 			rospy.sleep(const.SLEEP_TIME)
 									
