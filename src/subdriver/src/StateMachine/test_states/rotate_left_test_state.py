@@ -9,14 +9,14 @@ class RotateLeft(Sub):
 		
 	def execute(self, userdata):
 		self.init_state()
-		rotation_magnitude = -.5
+		rotation_magnitude = .5
 		
 		msg = self.init_joy_msg()
     
     # for 5 seconds, go rotate at whatever magnitude 
 		while(rospy.get_time() - self.current_state_start_time < 5):
 			rospy.loginfo("rotating left')
-			msg.axes[const.AXES['rotate']] =  rotation_magnitude
+			msg.axes[const.AXES['rotate']] = rotation_magnitude
 			self.publish(msg)
 			rospy.sleep(const.SLEEP_TIME)
 									
