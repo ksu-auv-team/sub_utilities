@@ -22,6 +22,6 @@ class RotateRight(Sub):
 									
 		rospy.loginfo("We should've rotated right")
                     
-    # We can absolutely test if we did rotate or not but that's a todo
-    # TODO: Cache gbl.state_heading (or was it gbl.heading?) to compare to our new heading
+		# We can absolutely test if we did rotate or not but that's a todo
+		# TODO: Cache gbl.state_heading (or was it gbl.heading?) to compare to our new heading
 		return 'rotated_right'
