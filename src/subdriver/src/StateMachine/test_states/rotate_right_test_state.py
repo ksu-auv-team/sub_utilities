@@ -2,9 +2,9 @@ from StateMachine.sub import *
 
 # Sole purpose is to test the sub's ability to go rotate right
 class RotateRight(Sub):
-  
-  # Gives a list of outcomes from this state
-  def __init__(self):
+
+	# Gives a list of outcomes from this state
+	def __init__(self):
 		smach.State.__init__(self,outcomes=['rotated_right'])
 		
 	def execute(self, userdata):
@@ -15,7 +15,7 @@ class RotateRight(Sub):
     
     # for 5 seconds, go rotate at whatever magnitude 
 		while(rospy.get_time() - self.current_state_start_time < 5):
-			rospy.loginfo("rotating right')
+			rospy.loginfo("rotating right")
 			msg.axes[const.AXES['rotate']] = rotation_magnitude
 			self.publish(msg)
 			rospy.sleep(const.SLEEP_TIME)
