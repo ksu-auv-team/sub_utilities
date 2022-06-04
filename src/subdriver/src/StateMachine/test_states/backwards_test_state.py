@@ -12,12 +12,14 @@ class Backwards(Sub):
 		frontback_magnitude = -.5
 
 		msg = self.init_joy_msg()
+		dive_mag = -.2
+		msg.axes[const.AXES['vertical']] = dive_mag
 
-		# for 5 seconds, go forward at wahtever magnitude 
-		while(rospy.get_time() - self.current_state_start_time < 5):
+		# for 5 seconds, go forward at wahtever magnitude
+		while((rospy.get_time() - self.current_state_start_time) < 5):
 			rospy.loginfo("BACKING UP!")
 			msg.axes[const.AXES['frontback']] = frontback_magnitude
-			self.publish(msg)
+			self.publish_joy(msg)
 			rospy.sleep(const.SLEEP_TIME)
 
 		rospy.loginfo("We should've gone backwards")

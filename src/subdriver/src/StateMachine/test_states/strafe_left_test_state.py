@@ -13,11 +13,13 @@ class StrafeLeft(Sub):
 		strafe_magnitude = .5
 
 		msg = self.init_joy_msg()
+		dive_mag = -.2
+		msg.axes[const.AXES['vertical']] = dive_mag
 
-		while(rospy.get_time() - self.current_state_start_time < 5):
+		msg.axes[const.AXES['strafe']] =  strafe_magnitude
+		while((rospy.get_time() - self.current_state_start_time) < 5):
 			rospy.loginfo("strafing left")
-			msg.axes[const.AXES['strafe']] =  strafe_magnitude
-			self.publish(msg)
+			self.publish_joy(msg)
 			rospy.sleep(const.SLEEP_TIME)
 
 		rospy.loginfo("We should've strafed left")
