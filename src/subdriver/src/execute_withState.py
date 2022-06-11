@@ -10,6 +10,7 @@ import StateMachine.machines.TestSpinMachine as testspin
 import StateMachine.machines.QualifyStraightMachine as dumbqualify
 import StateMachine.machines.TestTrackMachine as testtrack
 import StateMachine.machines.TestArbitraryMachine as arb
+import StateMachine.machines.FunctionTestMachine as functest
 
 
 # Global values updated in real time
@@ -31,6 +32,7 @@ states = {
     'PrequalifyMachine': prequal.createStateMachine,
     'TestSpinMachine': testspin.createStateMachine,
     'QualifyStraightMachine': dumbqualify.createStateMachine,
+    'FunctionTestMachine': functest.createStateMachine,
     'TestTrackMachine': testtrack.createStateMachine,
 }
 
@@ -41,7 +43,7 @@ def main():
         for machine in states:
             print(machine)
         return
-    
+
     # If the user wants to use an arbitrary state
     if args.arbitrary:
         my_class = locate(args.arbitrary)

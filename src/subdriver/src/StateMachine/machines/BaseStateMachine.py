@@ -44,7 +44,7 @@ def createStateMachine():
     sm_oct_search = smach.StateMachine(outcomes=['search_found'])
     sm_gate_search = smach.StateMachine(outcomes=['search_found'])
     sm_buoy_search = smach.StateMachine(outcomes=['search_found'])
-    
+
     # Open the container
     with sm_AUV:
 
