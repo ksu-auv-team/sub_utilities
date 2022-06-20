@@ -13,7 +13,7 @@ def createStateMachine():
 
     # Create the top level SMACH state machine
     sm_AUV = smach.StateMachine(outcomes=['finished_run'])
-    
+
     # Open the container
     with sm_AUV:
 
