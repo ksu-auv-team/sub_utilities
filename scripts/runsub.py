@@ -122,6 +122,20 @@ class SubSession():
         # Return the reference to the node
         return network_node
 
+    def start_blob(self):
+        rospy.loginfo("Starting the BLOB node")
+
+        # Get a node reference
+        package = 'network_wrapper'
+        executable = 'gate-blob-detector.py'
+        network = roslaunch.core.Node(package, executable)
+
+        # Launch the node
+        network_node = self.launcher.launch(network)
+
+        # Return the reference to the node
+        return network_node
+
     def start_movement(self):
         rospy.loginfo("Starting the movement package")
 
