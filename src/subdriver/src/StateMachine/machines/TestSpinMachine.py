@@ -9,7 +9,6 @@ from StateMachine.taskless.surface import *
 from StateMachine.taskless.spin2win import *
 
 def createStateMachine():
-    rospy.loginfo("WEEEEEEEEEEEEEEEEEEEEEEEEEE")
     rospy.init_node('AUV_StateMachine')
 
     # Create the top level SMACH state machine
