@@ -12,10 +12,10 @@ class Forward(Sub):
 	def execute(self, userdata):
 		rospy.loginfo("GOING FORWARD")
 		self.init_state()
-		frontback_magnitude = .5
+		frontback_magnitude = .25
 
 		msg = self.init_joy_msg()
-		dive_mag = -.2
+		dive_mag = -.1
 		msg.axes[const.AXES['vertical']] = dive_mag
 
 		msg.axes[const.AXES['frontback']] = frontback_magnitude

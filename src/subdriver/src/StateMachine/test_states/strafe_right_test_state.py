@@ -9,10 +9,10 @@ class StrafeRight(Sub):
 
 	def execute(self, userdata):
 		self.init_state()
-		strafe_magnitude = -.5
+		strafe_magnitude = -.25
 
 		msg = self.init_joy_msg()
-		dive_mag = -.2
+		dive_mag = -.1
 		msg.axes[const.AXES['vertical']] = dive_mag
 
 		msg.axes[const.AXES['strafe']] =  strafe_magnitude

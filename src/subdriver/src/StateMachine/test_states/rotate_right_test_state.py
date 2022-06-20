@@ -9,10 +9,10 @@ class RotateRight(Sub):
 
 	def execute(self, userdata):
 		self.init_state()
-		rotation_magnitude = -.5
+		rotation_magnitude = -.25
 
 		msg = self.init_joy_msg()
-		dive_mag = -.2
+		dive_mag = -.1
 		msg.axes[const.AXES['vertical']] = dive_mag
 
 		msg.axes[const.AXES['rotate']] = rotation_magnitude

@@ -9,7 +9,7 @@ class SurfaceSub(Sub):
 
 	def execute(self, userdata):
 		self.init_state()
-		vertical_magnitude = .5
+		vertical_magnitude = .3
 		gbl.surfacing = True
 
 		msg = self.init_joy_msg()

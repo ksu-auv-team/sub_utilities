@@ -13,7 +13,7 @@ class StopState(Sub):
         rospy.loginfo("STOPPING JUST IN CASE")
         msg = self.init_joy_msg()
         msg.axes[const.AXES['vertical']] = 0
-        msg.axes[const.AXES['strafe']]
+        msg.axes[const.AXES['frontback']] = 0
         msg.axes[const.AXES['strafe']] = 0
         self.publish_joy(msg)
 
