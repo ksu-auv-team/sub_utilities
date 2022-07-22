@@ -2,7 +2,7 @@
 
 from StateMachine.sub import *
 from StateMachine import controllers
-from controllers import PID
+# from controllers import PID
 
 #TODO: clean up - this needs more work than I'm willing to do right now (while merging stuff)
 # add a buoy class group, and reference PID() and msg correctly
@@ -30,7 +30,7 @@ class Track_Buoy(Sub):
             return "lost_buoy"
 
 
-        depth_pid = PID(s=gbl.depth)
+        depth_pid = controllers.PID(s=gbl.depth)
         # strafe_pid = PID(s=)
         # Line up with buoy
         # Since the buoy is spinning, there might be a problem lining up with it. Not sure what to do if that is the case
