@@ -6,11 +6,11 @@ from StateMachine.sub import *
 class Dumb_Start(Sub):
     def __init__(self):
         smach.State.__init__(self, outcomes=['setup_complete'])
-        
+
 
     def execute(self, userdata):
         # Set the run start time to the current ros time
-        gbl.run_start_time = rospy.get_time() 
+        gbl.run_start_time = rospy.get_time()
 
         # Initialize the current state
         self.init_state()
@@ -24,7 +24,7 @@ class Dumb_Start(Sub):
 
         # Even though we're techincally not looking for it, we still want to
         # make sure that the rest of the machine knows what we're looking for
-        gbl.current_target = const.CLASSES['start_gate']
+        gbl.current_target = const.CLASSES['gate']
 
         # Initialize joystick message
         curr_msg = self.init_joy_msg()

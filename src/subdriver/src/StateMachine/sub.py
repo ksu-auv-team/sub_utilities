@@ -283,7 +283,6 @@ class Sub(smach.State):
         return msg
 
 
-
     def get_depth(self):
         if gbl.debug:
             rospy.loginfo("Depth is none, but we are debugging, returning 0.0")

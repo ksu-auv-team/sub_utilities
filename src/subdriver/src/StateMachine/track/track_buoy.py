@@ -2,6 +2,7 @@
 
 from StateMachine.sub import *
 from StateMachine import controllers
+from controllers import PID
 
 #TODO: clean up - this needs more work than I'm willing to do right now (while merging stuff)
 # add a buoy class group, and reference PID() and msg correctly
@@ -25,41 +26,44 @@ class Track_Buoy(Sub):
 
         msg = self.init_joy_msg()
 
-        if not self.get_boxes_of_classes(gbl.detections_front, const.CLASS_GROUPS['buoy'])[0]:
+        if not self.get_boxes_of_classes(gbl.detections_front, const.CLASSES['buoy'])[0]:
             return "lost_buoy"
 
 
+        depth_pid = PID(s=gbl.depth)
+        # strafe_pid = PID(s=)
         # Line up with buoy
         # Since the buoy is spinning, there might be a problem lining up with it. Not sure what to do if that is the case
-        # The below code assumes it is able to identify the spinning buoy the entire time.
+        # The below code assu-mes it is able to identify the spinning buoy the entire time.
         
-        #TODO: implement this method and define this constant
-        while self.get_center(self.get_boxes_of_classes(gbl.detections_front, const.CLASS_GROUPS['buoy'])[0]) != 0:
-            self.matchBuoyDepth()
-            self.matchBuoyStrafe()
-            self.moveCloseToBuoy()
+        #TODO: implement this method and define this constants
+        while self.get_center(self.get_boxes_of_classes(gbl.detections_front, const.CLASSES['buoy'])[0]) != 0:
+            self.matchBuoyDepth(msg)
+            self.matchBuoyStrafe(msg)
+            self.moveCloseToBuoy(msg)
 
         # At this point, the sub is stationary and facing the Buoy
         return 'locked_onto_buoy'
 
-    def matchBuoyDepth(self):
+    def matchBuoyDepth(self, msg):
         rospy.loginfo("matchBuoyDepth: Adjusting depth")
-        
-        msg.axes[const.AXES['vertical']] = PID().update(self.get_center(gbl.detections_front[self.findBoxNumber()])[1])
+        # controllers.PID depth_pid
+        # depth.pid         
+        msg.axes[const.AXES['vertical']] = depth_pid.Update(self.get_center(gbl.detections_front[self.findBoxNumber()])[1])
         self.publish_joy(msg)
         rospy.sleep(const.SLEEP_TIME)
         self.publish_joy(msg)
 
-    def matchBuoyStrafe(self):
+    def matchBuoyStrafe(self, msg):
         rospy.loginfo("matchBuoyStrafe: Adjusting left to right")
-        msg.axes[const.AXES['strafe']] = PID().update(self.get_center(gbl.boxes[self.findBoxNumber()])[0])
+        msg.axes[const.AXES['strafe']] = controllers.PID().Update(self.get_center(gbl.boxes[self.findBoxNumber()])[0])
         self.publish_joy(msg)
         rospy.sleep(const.SLEEP_TIME)
         # Stop rotating
         msg.axes[const.AXES['strafe']] = 0
         self.publish_joy(msg)
     
-    def moveCloseToBuoy(self):
+    def moveCloseToBuoy(self, msg):
         rospy.loginfo("moveCloseToBuoy: Moving close to buoy")# While the image width of buoy is less than 0.75
         msg.axes[const.AXES['forward']] = 0.3
         rospy.sleep(const.SLEEP_TIME)

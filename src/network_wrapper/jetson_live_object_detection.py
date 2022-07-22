@@ -272,7 +272,7 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--model', default="ssd_mobilenet_v1_coco", help="set name of neural network model to use")
     parser.add_argument('-v', '--verbosity', action='store_true', help="set logging verbosity (doesn't work)")
     parser.add_argument('-d', '--debug', action='store_true', help='Runs the network using a local camera, not from ROS, but will still publish to ROS topics.')
-    parser.add_argument('-c', '--camera', default='/dev/video0', help='/path/to/video, defaults to /dev/video0')
+    parser.add_argument('-c', '--camera', default='/dev/camera0', help='/path/to/video, defaults to /dev/video0')
     parser.add_argument('--height', default=420, help='Set the video capture height for your camera in pixels')
     parser.add_argument('--width', default=860, help='Set the video capture width for your camera in pixels')
     parser.add_argument('-r', '--rate', type=int, default=-1, help='Specify the rate to run the neural network at, i.e. number of images to look at per second. Defaults to fastests possible.')
@@ -303,8 +303,8 @@ if __name__ == "__main__":
         front_img_pub = rospy.Publisher('front_network_imgs', Image, queue_size=1)
         front_detections_pub = rospy.Publisher('front_network_output', Detections, queue_size=1)
         
-        #bottom_img_pub = rospy.Publisher('bottom_network_imgs', Image, queue_size=1)
-        #bottom_detections_pub = rospy.Publisher('bottom_network_output', Detections, queue_size=1)
+        bottom_img_pub = rospy.Publisher('bottom_network_imgs', Image, queue_size=1)
+        bottom_detections_pub = rospy.Publisher('bottom_network_output', Detections, queue_size=1)
 
     test_video_picture = None
     if args.test_video is not None and args.test_picture is not None:

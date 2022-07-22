@@ -2,7 +2,7 @@
 '''Collection of system constants referenced by the system.
 
 Collecting necessary constants in a single location so that
-tweaks can be adjusted more easily. 
+tweaks can be adjusted more easily.
 '''
 
 # Should the run be flipped left-to-right?
@@ -61,14 +61,15 @@ BUTTONS = {'a': 0,
                 'rstickpress': 10}
 
 CLASSES = {'background': 0,
-                'buoy_aswang': 1,
-                'buoy_draugr': 2,
-                'buoy_jiangshi': 3,
-                'buoy_vetalas': 4,
-                'coffin': 5,
-                'dracula': 6,
-                'path_marker': 7,
-                'start_gate': 8}
+                'gman': 1,
+                'bootlegger': 2,
+                'gman_star': 3,
+                'bighole': 4,
+                'bootlegger_small_hole': 5,
+                'gman_badge': 6,
+                'tommy_gun': 7,
+                'path_marker': 8,
+                'gate': 9}
                 # 'roulette_wheel': 9,
                 # 'red_wheel_side': 10,
                 # 'black_wheel_side': 11,
@@ -100,7 +101,7 @@ JOY_MAP = {
 
 Defines offset in MoA (or just degrees, depending upon launcher accuracy and
 offset required) to compensate for launcher mounting position in relation
-to sub Line-of-Sight. 
+to sub Line-of-Sight.
 
 Named after the practice in shooting sports where instead
 of adjusting the rifle's sights to align point-of-aim to point-of-strike, the
