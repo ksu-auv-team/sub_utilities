@@ -7,7 +7,7 @@ echo "Installing TF TRT Models"
 git clone --recursive https://github.com/NVIDIA-Jetson/tf_trt_models.git
 cd tf_trt_models
 
-sudo ./install.sh python3
+sudo sh install.sh python3
 
 echo "Testing model install..."
 cd third_party/models/research
