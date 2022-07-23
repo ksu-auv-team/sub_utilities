@@ -10,9 +10,11 @@
 #Usage: e.g. ./split.sh in_vids out_imgs 10
 mkdir -p ${2-output}
 
+temp=0
 #loop through everything in the input folder
 for f in $1/*
 do
     #run ffmpeg to split videos
-	ffmpeg -i $f -qscale:v 2 -r ${3-3} ./${2-output}/img_%04d.jpg
+	ffmpeg -i $f -qscale:v 2 -r ${3-3} ./${2-output}/img_${temp}_%04d.jpg
+    temp = {$temp+1}
 done
