@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 
 from StateMachine.sub import *
+from StateMachine import const
 
 # define state track_gate
 class Track_Gate(Sub):
@@ -13,11 +14,12 @@ class Track_Gate(Sub):
 
         # Start the front network
         self.use_front_network(True)
+        class_num = const.CLASSES['gate']
 
         #control loop
         while(1):
             msg = self.init_joy_msg()
-            detection = self.get_box_of_class(gbl.detections_front, gbl.current_target)
+            detection = self.get_box_of_class(gbl.detections_front, class_num, gbl.current_target)
 
             if (detection != None) and detection.score > 0.3:  # If the box is good
                 self.last_seen = rospy.get_time()
@@ -28,7 +30,7 @@ class Track_Gate(Sub):
                     msg.axes[const.AXES['rotate']] = 0.2
                 elif center[0] > 0.55:
                     msg.axes[const.AXES['rotate']] = -0.2
-  
+
                 if center[1] < .45:
                     if self.get_depth() > 0.5:
                         msg.axes[const.AXES['vertical']] =  0.2
@@ -36,12 +38,12 @@ class Track_Gate(Sub):
                 elif center[1] > .55:
                     msg.axes[const.AXES['vertical']] = -0.2
                 '''
-                
+
                 msg = self.align_with_box(detection.box, offsetX=0.7, offsetY=0.5)
-                
+
                 msg.axes[const.AXES['frontback']] = 0.3
-                
-                
+
+
                 if detection:
                     if self.get_distance(detection.box[0], detection.box[1], detection.box[2], detection.box[3]) > 0.8:
                         self.is_close = True
@@ -63,13 +65,14 @@ class Track_Gate(Sub):
                 msg.axes[const.AXES['frontback']] = 0
                 self.publish_joy(msg)
                 rospy.logwarn("Lost tracking the gate for more than 2 seconds")
-                
+
                 if(gbl.debug):
                     return "approached_gate" # DEBUG Purposes Only!
-                
+
                 return "lost_gate"
 
             self.publish_joy(msg)
+
 
             rospy.sleep(const.SLEEP_TIME)
 

@@ -4,6 +4,8 @@ from StateMachine.sub import *
 
 # define state search_left
 class Search_Left(Sub):
+    class_num = const.CLASSES['gate']
+
     def __init__(self):
         smach.State.__init__(self, outcomes=['object_found','object_not_found'])
 
@@ -11,7 +13,7 @@ class Search_Left(Sub):
         self.init_state()
         msg = self.init_joy_msg()
         msg.axes[const.AXES['rotate']] = 0.3
-        
+
         # Start the front network
         self.use_front_network(True)
 

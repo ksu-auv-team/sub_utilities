@@ -40,7 +40,7 @@ def signal_handler(signal, frame):
 
 #ROS callbacks
 #global to make the linter happy
-def vfr_hud_callback(msg): 
+def vfr_hud_callback(msg):
     gbl.depth = msg.altitude
     gbl.heading = msg.heading
 
@@ -63,7 +63,7 @@ def bbox_callback_bottom(msg):
 class Sub(smach.State):
     '''This is our overall 'sub' state. It is the superclass that all the other
     states inherit from.
-    
+
     The idea here being that there are many things that all the states should
     be able to do, but we don't want to re-write them all.
     '''
@@ -97,7 +97,7 @@ class Sub(smach.State):
 
 
     def move_distance(self, distance, direction):
-      """ Direcion will be something like: 'strafe', 'vertical', or 'rotate' 
+      """ Direcion will be something like: 'strafe', 'vertical', or 'rotate'
       This function will be fully implemented once data on acceleration is measured in pool tests """
       pass
 
@@ -105,7 +105,7 @@ class Sub(smach.State):
     def execute(self, userdata):
         '''Executes the behavior defined for a given state.
         Every state requires an 'execute' function. This is the function that automatically
-        gets called by SMACH when we transition into the new state. In each of the subclasses 
+        gets called by SMACH when we transition into the new state. In each of the subclasses
         that inherit from 'sub' we override the 'execute' function to do that state's speciffic job.
 
         Args:
@@ -135,11 +135,11 @@ class Sub(smach.State):
 
     def get_center(self, box):
         '''Gets the center point of a bounding box.
-        
+
 
         Args:
           box: Box(type?), box whose center to calculate.
-        
+
         Returns:
           center of a bounding box sent to it
         '''
@@ -168,7 +168,7 @@ class Sub(smach.State):
         return math.sqrt((box[4]-box[2])**2 + (box[5]-box[3])**2)
 
     def align_with_screen(self, box, offsetX = 0.5, offsetY = 0.5):
-        """         
+        """
         Args:
             box: [top-left x, top-left y, bottom-right x, bottom-right y]
 
@@ -194,20 +194,20 @@ class Sub(smach.State):
 
         elif(offsetX < center[0]): # Box is to the right of targetX
             msg.axes[const.AXES['strafe']] = STRAFE_SPEED # Move Left
-        
-        
+
+
         # Vertical
         if(offsetY > center[1]): # Box is below targetY
             msg.axes[const.AXES['vertical']] = VERTICAL_SPEED # Move Up
 
         elif(offsetY < center[1]): # Box is above targetY
             msg.axes[const.AXES['vertical']] = -1 * VERTICAL_SPEED # Move Down
-        
+
         return msg
 
 
     def align_with_box(self, box, offsetX = 0.5, offsetY = 0.5):
-        """ 
+        """
         Args:
             box: [top-left x, top-left y, bottom-right x, bottom-right y]
 
@@ -227,7 +227,7 @@ class Sub(smach.State):
         boxHeight = box[3] - box[1] #box[bottom] - box[top]
         #center = self.get_center(box)
         msg = self.init_joy_msg()
-        
+
         relativeX = box[0] + offsetX * boxWidth # Target x position relative to current
         relativeY = box[1] + offsetY * boxHeight # Target y position relative to current
 
@@ -238,7 +238,7 @@ class Sub(smach.State):
                 msg.axes[const.AXES['strafe']] = -1 * STRAFE_SPEED
             elif(relativeX < 0.5): # Target Position is to the left
                 msg.axes[const.AXES['strafe']] = STRAFE_SPEED
-        
+
         # Vertical
         if(relativeY != 0.5):
 
@@ -246,7 +246,7 @@ class Sub(smach.State):
                 msg.axes[const.AXES['vertical']] = -1 * VERTICAL_SPEED
             elif(relativeY < 0.5): # Target Position is to the above
                 msg.axes[const.AXES['vertical']] = VERTICAL_SPEED
-        
+
         return msg
 
     def center_on_heading(self, target, msg = [], min_thrust=0.1, max_thrust=0.4):
@@ -268,7 +268,7 @@ class Sub(smach.State):
             msg = self.init_joy_msg()
 
         diff = self.angle_diff(gbl.heading, target)
-        
+
         val = diff * factor
 
         if val > 0:
@@ -367,14 +367,14 @@ class Sub(smach.State):
 
             if (best_det):
                 found_detections.append(best_det)
-                rospy.loginfo('\tclass: %s\tconf: %s', str(det.class_id), str(det.score))   
-        
-        return found_detections     
+                rospy.loginfo('\tclass: %s\tconf: %s', str(det.class_id), str(det.score))
+
+        return found_detections
 
 
-        
+
     def set_active_launcher(self):
-        '''Changes active launcher. 
+        '''Changes active launcher.
             Assumes that the first launcher will be LAUNCHER_LEFT and that the function will be called every time a launcher is used to select the next one.
         '''
         if self.active_launcher == 'LAUNCHER_LEFT':
@@ -391,12 +391,12 @@ class Sub(smach.State):
         Returns the difference between the two angles. Wraps around so that, e.g.,
         angle_diff(20, 330) returns -50 and angle_diff(330, 20) returns 50. angle_diff(90, 180)
         returns 90 and angle_diff(180, 90) returns -90.
-        i.e. the number it returns is always the shorter way around and will be negative if necessary 
+        i.e. the number it returns is always the shorter way around and will be negative if necessary
         (if target is counterclockwise from/smaller than source)
         '''
         if gbl.debug:
             return 0
-        
+
         elif target is None or source is None:
             return None
 
@@ -429,7 +429,7 @@ class Sub(smach.State):
             msg.axes[const.AXES['vertical']] = 0
 
         #changes go here
-        self.joy_pub.publish(msg) 
+        self.joy_pub.publish(msg)
 
     # These get set at the start of each state, allowing the user to call them as needed
     current_state_start_time = None

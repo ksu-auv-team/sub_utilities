@@ -31,7 +31,7 @@ class Search_Front(Sub):
 
             else:
                 self.search_frames_seen = 0
-			
+
             rospy.sleep(const.SLEEP_TIME)
-        
+
 

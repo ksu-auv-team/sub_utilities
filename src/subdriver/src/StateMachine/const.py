@@ -69,23 +69,11 @@ CLASSES = {'background': 0,
                 'gman_badge': 6,
                 'tommy_gun': 7,
                 'path_marker': 8,
-                'gate': 9}
-                # 'roulette_wheel': 9,
-                # 'red_wheel_side': 10,
-                # 'black_wheel_side': 11,
-                # 'slot_machine': 12,
-                # 'slot_handle': 13,
-                # 'r_slot_target': 14,
-                # 'y_slot_target': 15,
-                # 'r_ball_tray': 16,
-                # 'g_ball_tray': 17,
-                # 'floating_area': 18,
-                # 'r_funnel': 19,
-                # 'y_funnel': 20,
-                # 'g_chip_dispenser': 21,
-                # 'g_chip_plate': 22,
-                # 'dieX': 23,
-                # 'g_funnel': 24,
+                'gate': 9,
+                "notepad":10,
+				"bottle":11,
+				"barrel":12,
+				"telephone":13}
                 # 'pole':25}
 
 
