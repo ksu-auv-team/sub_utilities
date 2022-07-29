@@ -10,6 +10,7 @@ class Search_Left(Sub):
         smach.State.__init__(self, outcomes=['object_found','object_not_found'])
 
     def execute(self, userdata):
+        rospy.loginfo("SEARCH LEFT CURR TARGET IS " + str(gbl.current_target))
         self.init_state()
         msg = self.init_joy_msg()
         msg.axes[const.AXES['rotate']] = 0.3

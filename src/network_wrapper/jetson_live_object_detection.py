@@ -19,19 +19,20 @@ class JetsonLiveObjectDetection():
     def __init__(self, model, camera=None, debug=False, thresh=0.4, last_network_callback_time=0.0):
         self.debug = debug
         if test_video_picture is not None:
-            self.camera = cv2.VideoCapture(test_video_picture)
+             self.camera = cv2.VideoCapture(test_video_picture, cv2.CAP_DSHOW)
         elif self.debug:
             self.camera = cv2.VideoCapture(camera)
             self.camera.set(3, args.width)
             self.camera.set(4, args.height)
         self.model = model
+        print("()()()()()()())() " + str(self.model))
         self.detector = ObjectDetection(self.model, label_map=args.label)
         self.thresh = float(thresh)
         self.last_network_callback_time = last_network_callback_time
 
         # Default to not running the network node on either camera, must push an enable/disable message from statemachine
         # We do this so we can control what states the network is actually running in
-        self.run_network_front = False
+        self.run_network_front = True
         self.run_network_bottom = False
 
     def signal_handler(self, sig, frame):
@@ -66,11 +67,15 @@ class JetsonLiveObjectDetection():
         rows = img.shape[0]
         detections = []
 
+        print("******************************** " + str(num_detections))
+        #print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& " + str(len(detections)))
         for i in range(num_detections):
             bbox = [float(p) for p in boxes[i]]
             score = float(scores[i])
             classId = int(classes[i])
+
             if score > self.thresh:
+                print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ score is " + str(score))
                 detections.append(self.detector.labels[str(classId)])
                 x = int(bbox[1] * cols)
                 y = int(bbox[0] * rows)
@@ -86,7 +91,7 @@ class JetsonLiveObjectDetection():
         ''' Run the object detection on recorded video or images
         '''
         if test_video_picture is not None:
-            fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+            fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
             names = test_video_picture.split('.')
             if args.test_video is not None and not args.no_save_images:
                 out = cv2.VideoWriter(names[0] + '_output.' + names[1], fourcc, 30.0, (640,480))
@@ -150,6 +155,8 @@ class JetsonLiveObjectDetection():
                     frame_counter = 0
                     scores, boxes, classes, num_detections = self.detector.detect(img)
                     new_detections = None
+                    print("classes " + str(classes))
+                    print("scores " + str(scores))
                     img, new_detections = self._visualizeDetections(img, scores, boxes, classes, num_detections)
 
                     print ("Found objects: " + str(' '.join(new_detections)) + ".")
@@ -189,11 +196,12 @@ class JetsonLiveObjectDetection():
 
         # Run the code as a ROS node, pulls images on a topic, published them out on antoher
         else:
-            rospy.Subscriber('front_raw_imgs', Image, self.run_network_node_front, queue_size=1)
-            #rospy.Subscriber('bottom_raw_imgs', Image, self.run_network_node_bottom, queue_size=1)
-            rospy.Subscriber('enable_front_network', Bool, self.enable_front_callback)
-            rospy.Subscriber('enable_bottom_network', Bool, self.enable_bottom_callback)
-            rospy.spin()
+            if not args.no_ros:
+                rospy.Subscriber('front_raw_imgs', Image, self.run_network_node_front, queue_size=1)
+                #rospy.Subscriber('bottom_raw_imgs', Image, self.run_network_node_bottom, queue_size=1)
+                rospy.Subscriber('enable_front_network', Bool, self.enable_front_callback)
+                rospy.Subscriber('enable_bottom_network', Bool, self.enable_bottom_callback)
+                rospy.spin()
 
     def run_network_node_front(self, msg):
         ''' Runs network node on the recevial of an image from ROS
@@ -209,7 +217,8 @@ class JetsonLiveObjectDetection():
         if (time.time() - self.last_network_callback_time) <= args.rate:
             return
         bridge = cv_bridge.CvBridge()
-        img = bridge.imgmsg_to_cv2(msg)
+        #img = bridge.imgmsg_to_cv2(msg)
+        img = ros_numpy.numpify(msg)
 
         scores, boxes, classes, num_detections = self.detector.detect(img)
         new_detections = None
@@ -242,7 +251,8 @@ class JetsonLiveObjectDetection():
         if (time.time() - self.last_network_callback_time) <= args.rate:
             return
         bridge = cv_bridge.CvBridge()
-        img = bridge.imgmsg_to_cv2(msg)
+        #img = bridge.imgmsg_to_cv2(msg)
+        img = ros_numpy.numpify(msg)
 
         scores, boxes, classes, num_detections = self.detector.detect(img)
         new_detections = None
@@ -272,11 +282,11 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--model', default="comp_22_layout", help="set name of neural network model to use")
     parser.add_argument('-v', '--verbosity', action='store_true', help="set logging verbosity (doesn't work)")
     parser.add_argument('-d', '--debug', action='store_true', help='Runs the network using a local camera, not from ROS, but will still publish to ROS topics.')
-    parser.add_argument('-c', '--camera', default='/dev/camera0', help='/path/to/video, defaults to /dev/video0')
+    parser.add_argument('-c', '--camera', default='/dev/video0', help='/path/to/video, defaults to /dev/video0')
     parser.add_argument('--height', default=420, help='Set the video capture height for your camera in pixels')
     parser.add_argument('--width', default=860, help='Set the video capture width for your camera in pixels')
     parser.add_argument('-r', '--rate', type=int, default=-1, help='Specify the rate to run the neural network at, i.e. number of images to look at per second. Defaults to fastests possible.')
-    parser.add_argument('-l', '--label', default='Badge-TommyGun-gman-bootlegger-telephone-notepad-whiskey-barrel_label_map.pbtxt', help='Override the name of the label map in your model directory. Defaults to label_map.pbtxt')
+    parser.add_argument('-l', '--label', default='label_map.pbtxt', help='Override the name of the label map in your model directory. Defaults to label_map.pbtxt')
     parser.add_argument('--test-video', help='/path/to/test/video This is used if you want to test your network on a static video. It will append \'_output\' to your file before saving it.')
     parser.add_argument('--test-picture', help='/path/to/test/picture This is used if you want to test your network on a static picture. It will append \'_output\' to your file before saving it.')
     parser.add_argument('--thresh', default=0.4, help='Override the default detection threshold. Default = 0.4')
@@ -285,18 +295,21 @@ if __name__ == "__main__":
     parser.add_argument('--no-ros', action='store_true', help='Will not subscribe or publish to any ros topics')
     parser.add_argument('--front-start-on', action='store_true', help='Will start with the front camera node running')
     parser.add_argument('--bottom-start-on', action='store_true', help='Will start with the bottom camera node running')
+    
+    args,_ = parser.parse_known_args()
+    if args.no_ros:
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! why no ros?")
+        args,_ = parser.parse_known_args()
 
-    if parser.parse_args().no_ros:
-        args = parser.parse_args()
-
-    if not parser.parse_args().no_ros:
+    if not args.no_ros:
         import cv_bridge
         import rospy
         from sensor_msgs.msg import Image
         from std_msgs.msg import Bool
+        import ros_numpy
         bridge = cv_bridge.CvBridge()
-
-        args = parser.parse_args(rospy.myargv()[1:])
+#        rospy.loginfo("Something myargv " + rospy.myargv()[1:])
+        args,_ = parser.parse_known_args(rospy.myargv()[1:])
 
         rospy.init_node('Network_Vision')
 
@@ -314,6 +327,8 @@ if __name__ == "__main__":
         test_video_picture = args.test_video
     elif args.test_picture is not None:
         test_video_picture = args.test_picture
+    
+    print(")()()()()())()()()()() args " + str(args.model))
 
     live_detection = JetsonLiveObjectDetection(model=args.model, camera=args.camera, debug=args.debug, thresh=args.thresh, last_network_callback_time=time.time())
 

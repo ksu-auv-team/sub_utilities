@@ -61,19 +61,19 @@ BUTTONS = {'a': 0,
                 'rstickpress': 10}
 
 CLASSES = {'background': 0,
-                'gman': 1,
-                'bootlegger': 2,
-                'gman_star': 3,
-                'bighole': 4,
-                'bootlegger_small_hole': 5,
-                'gman_badge': 6,
-                'tommy_gun': 7,
-                'path_marker': 8,
-                'gate': 9,
+                'barrel': 1,
+                'bighole': 2,
+                'bootlegger': 3,
+                'bootlegger_small_hole': 4,
+                'bottle': 5,
+                'gate': 6,
+                'gman': 7,
+                'gman_badge': 8,
+                'gman_star': 9,
                 "notepad":10,
-				"bottle":11,
-				"barrel":12,
-				"telephone":13}
+		"telephone":11,
+		"barrel":12,
+		"tommy_gun":13}
                 # 'pole':25}
 
 

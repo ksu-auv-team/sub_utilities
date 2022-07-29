@@ -8,6 +8,7 @@ class Search_Front(Sub):
         smach.State.__init__(self, outcomes=['object_found','object_not_found'])
 
     def execute(self, userdata):
+        rospy.loginfo("SEARCHING FRONT, CURR TARGET IS " + str(gbl.current_target))
         self.init_state()
         gbl.state_heading = gbl.heading
         msg = self.init_joy_msg()
