@@ -13,7 +13,7 @@ class StrafeRight(Sub):
 
 		msg = self.init_joy_msg()
 		depth = self.get_depth()
-		pid = PID(1, 0.1, 0.3, setpoint=(depth-2))
+		pid = PID(1, 0.1, 0.3, setpoint=self.get_depth())
 		pid.output_limits = (-0.5, 0.5)
 		
 		last_time = self.current_state_start_time

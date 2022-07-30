@@ -9,15 +9,26 @@ class SurfaceSub(Sub):
 
 	def execute(self, userdata):
 		self.init_state()
-		vertical_magnitude = .3
 		gbl.surfacing = True
 
 		msg = self.init_joy_msg()
-		msg.axes[const.AXES['vertical']] = vertical_magnitude
+		depth = self.get_depth()
+		pid = PID(1, 0.1, 0.3, setpoint=0)
+		pid.output_limits = (-0.5, 0.5)
+		
+		last_time = self.current_state_start_time
 
 
 		# for 5 seconds, go rotate at whatever magnitude
 		while((rospy.get_time() - self.current_state_start_time) < 5):
+			current_time = rospy.get_time()
+			dt = rospy.get_time() - last_time
+
+			power = pid(depth)
+			depth = self.get_depth()
+
+			msg.axes[const.AXES['vertical']] = power
+			
 			rospy.loginfo("YOU RAISE ME UUUUUUUUUPPPPPPPPPPP")
 			self.publish_joy(msg)
 			rospy.sleep(const.SLEEP_TIME)
