@@ -179,7 +179,8 @@ class SubSession():
     #start ALL the things
     def start(self):     
         # Run the Video Node
-        self.curr_children.append(self.start_video())
+	if (not self.no_save_images_):
+            self.curr_children.append(self.start_video())
         
         self.delay_start = time.time() # The time we will compare our arduino time to
         while(time.time() - self.delay_start < 2 and not self.sub_is_killed):
