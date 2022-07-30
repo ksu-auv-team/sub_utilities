@@ -16,7 +16,7 @@ class DiveDown(Sub):
 
     # for 5 seconds, go rotate at whatever magnitude
 		depth = self.get_depth()
-		pid = PID(1, 0.1, 0.3, setpoint=-0.66)
+		pid = PID(1, 0.1, 0.3, setpoint=-0.33)
 		pid.output_limits = (-0.5, 0.5)
 		
 		last_time = self.current_state_start_time
