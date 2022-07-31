@@ -1,6 +1,8 @@
 from StateMachine.sub import *
 import time
 from StateMachine import controllers
+from StateMachine.depth import DepthControl
+
 # from controllers import PID
 
 class HoldDepth(Sub):
@@ -15,25 +17,12 @@ class HoldDepth(Sub):
         rospy.loginfo("self.current_state_start_depth " + str(self.current_state_start_depth))
         # depth_pid = controllers.PID(p=.5, i=.1, d= .3, s=self.current_state_start_depth)
 
+        depth_control = DepthControl()
+        depth_control.run()
+        
         while(not rospy.is_shutdown()):
-            # vert_value = depth_pid.Update(self.get_depth())
-            # print('raw-ish vert_val ' + str(vert_value) + " gbl depth " + str(self.get_depth()))
-            # try:
-            #     vert_value = 1 / vert_value
-            # except:
-            #     vert_value = 0
-            # if (vert_value > .2):
-            #     vert_value = .2
-            # elif (vert_value < -.2):
-            #     vert_value = -.2
-            # print("vert_value " + str(vert_value) + ' gbl.depth is ' + str(gbl.depth) + ' GOAL DPETH is ' + str(self.current_state_start_depth))
-            time.sleep(2)
-            msg.axes[const.AXES['vertical']] = -.15
+            msg.axes[const.AXES['vertical']] = depth_control.get_power()
             self.publish_joy(msg)
-            time.sleep(1)
-            msg.axes[const.AXES['vertical']] = 0
-            self.publish_joy(msg)
-
         rospy.loginfo("Dying")
 
         return 'dead'

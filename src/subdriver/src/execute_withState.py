@@ -11,6 +11,7 @@ import StateMachine.machines.QualifyStraightMachine as dumbqualify
 import StateMachine.machines.TestTrackMachine as testtrack
 import StateMachine.machines.TestArbitraryMachine as arb
 import StateMachine.machines.FunctionTestMachine as functest
+import StateMachine.machines.CompZoomMachine as compzoom
 import StateMachine.machines.HoldDepthTestMachine as depth
 
 # Global values updated in real time
@@ -33,6 +34,7 @@ states = {
     'TestSpinMachine': testspin.createStateMachine,
     'QualifyStraightMachine': dumbqualify.createStateMachine,
     'FunctionTestMachine': functest.createStateMachine,
+    'CompZoomMachine': compzoom.createStateMachine,
     'TestTrackMachine': testtrack.createStateMachine,
     'HoldDepthTestMachine': depth.createStateMachine
 }
