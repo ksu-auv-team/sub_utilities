@@ -28,7 +28,7 @@ class Dumb_Start(Sub):
 
         # Initialize joystick message
         curr_msg = self.init_joy_msg()
-        curr_msg.axes[const.AXES['frontback']] = 0.15 # Forward half-power
+        # curr_msg.axes[const.AXES['frontback']] = 0.15 # Forward half-power
         curr_msg.axes[const.AXES['vertical']] = -0.3 # Down half-power
 
         # Control loop
