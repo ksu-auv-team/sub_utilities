@@ -20,7 +20,7 @@ def createStateMachine():
     with sm_AUV:
 
         rospy.loginfo("STATE MACHINE")
-        smach.StateMachine.add('DUMB_START', Dumb_Start(), transitions={'setup_complete':'DIVE'})
+        smach.StateMachine.add('DUMB_START', Dumb_Start(), transitions={'setup_complete':'FORWARD'})
         smach.StateMachine.add('FORWARD', Forward(), transitions={'went_forward_zoom': 'SPIN'})
         smach.StateMachine.add('SPIN', Spin(), transition={'spun_around': 'SURFACE'})
         smach.StateMachine.add('SURFACE', SurfaceSub(), transitions={'gone_up' : 'STOPPED'})

@@ -28,14 +28,14 @@ class Dumb_Start(Sub):
 
         # Initialize joystick message
         curr_msg = self.init_joy_msg()
-        curr_msg.axes[const.AXES['frontback']] = 0.5 # Forward half-power
-        curr_msg.axes[const.AXES['vertical']] = -0.5 # Down half-power
+        curr_msg.axes[const.AXES['frontback']] = 0.15 # Forward half-power
+        curr_msg.axes[const.AXES['vertical']] = -0.3 # Down half-power
 
         # Control loop
         while(1):
             self.publish_joy(curr_msg)
 
-            if(rospy.get_time() - self.current_state_start_time) > 5:
+            if(rospy.get_time() - self.current_state_start_time) > 4:
                 return 'setup_complete'
 
             rospy.sleep(const.SLEEP_TIME)
