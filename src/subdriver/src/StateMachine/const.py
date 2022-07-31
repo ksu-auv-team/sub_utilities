@@ -118,3 +118,5 @@ CAMERA_FORWARD_CENTER = {'X': 1, 'Z': 1}
 CAMERA_UNDER_CENTER = {'X': 1, 'Y': 1}
 
 SLEEP_TIME = 0.05 #the amount of time to sleep before looking for another frame
+WAIT_TIME = 2
+PULSE_TIME = 1

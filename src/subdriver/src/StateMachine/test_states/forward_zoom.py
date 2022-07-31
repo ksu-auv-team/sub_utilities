@@ -22,10 +22,22 @@ class Forward(Sub):
 		pid = PID(0.5, .1, .3, setpoint=bearing)
 		pid.output_limits = (-0.5, 0.5)
 
-		msg.axes[const.AXES['vertical']] = dive_mag
+		# msg.axes[const.AXES['vertical']] = dive_mag
 		msg.axes[const.AXES['frontback']] = frontback_magnitude
     	# for 5 seconds, go forward at wahtever magnitude
+		depth_state = 0
+		time_waited = 0
 		while(rospy.get_time() - self.current_state_start_time < 7):
+			if (depth_state == 0):
+                msg.axes[const.AXES['vertical']] = -.15
+                if (time_waited == const.WAIT_TIME):
+                    depth_state = 1
+                    time_waited = 0
+            elif (depth_state == 1):
+                msg.axes[const.AXES['vertical']] = 0
+                if (time_waited == const.WAIT_TIME):
+                    depth_state = 0
+                    time_waited = 0
 			power = pid(gbl.heading)
 			msg.axes[const.AXES['rotate']] = power
 			rospy.loginfo("GOING FORWARD")
