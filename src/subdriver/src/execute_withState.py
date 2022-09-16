@@ -11,6 +11,7 @@ import StateMachine.machines.QualifyStraightMachine as dumbqualify
 import StateMachine.machines.TestTrackMachine as testtrack
 import StateMachine.machines.TestArbitraryMachine as arb
 import StateMachine.machines.FunctionTestMachine as functest
+import StateMachine.machines.PoolTestMachine as pooltest
 import StateMachine.machines.HoldDepthTestMachine as depth
 
 # Global values updated in real time
@@ -34,7 +35,8 @@ states = {
     'QualifyStraightMachine': dumbqualify.createStateMachine,
     'FunctionTestMachine': functest.createStateMachine,
     'TestTrackMachine': testtrack.createStateMachine,
-    'HoldDepthTestMachine': depth.createStateMachine
+    'HoldDepthTestMachine': depth.createStateMachine,
+    'PoolTestMachine': pooltest.createStateMachine
 }
 
 def main():
