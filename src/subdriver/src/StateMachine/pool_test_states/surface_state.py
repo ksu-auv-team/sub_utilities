@@ -17,7 +17,7 @@ class SurfaceSub(Sub):
 
 
 		# for 5 seconds, go rotate at whatever magnitude
-		while((rospy.get_time() - self.current_state_start_time) < 7):
+		while((rospy.get_time() - self.current_state_start_time) < 11):
 			rospy.loginfo("YOU RAISE ME UUUUUUUUUPPPPPPPPPPP")
 			self.publish_joy(msg)
 			rospy.sleep(const.SLEEP_TIME)
