@@ -10,7 +10,7 @@ def readBox_server():
     rospy.spin()
 
 def handleReadBox(request):
-    print("Returning %s", request.desiredValue)
+    print(("Returning %s", request.desiredValue))
     if(request.desiredValue == "image_id"):
         return request.box[0]
     elif(request.desiredValue == "class_id"):

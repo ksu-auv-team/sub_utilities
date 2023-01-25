@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # ROS
 import rospy
@@ -51,14 +51,14 @@ def main():
         try:
             arb.createStateMachine(my_class())
         except:
-            print("I could not find: " + args.arbitrary)
+            print(("I could not find: " + args.arbitrary))
             print("There was something wrong with the arbitrary path you gave, I could not find it, please double check it and try again.")
             return
 
         return
 
     # Running the main state machine
-    print("Running {}".format(args.machine))
+    print(("Running {}".format(args.machine)))
 
     try:
         states[args.machine]()

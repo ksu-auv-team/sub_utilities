@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python3
 '''Collection of system constants referenced by the system.
 
 Collecting necessary constants in a single location so that

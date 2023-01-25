@@ -11,10 +11,10 @@ from tf_trt_models.detection import download_detection_model, build_detection_gr
 
 MODEL = 'ssd_mobilenet_v1_coco' if len(sys.argv) < 2 else sys.argv[1]
 
-print ("Downloading model " + MODEL + "..." )
+print(("Downloading model " + MODEL + "..." ))
 config_path, checkpoint_path = download_detection_model(MODEL, './data/' + MODEL + '/')
 
-print ("Building detection graph from model " + MODEL + "...")
+print(("Building detection graph from model " + MODEL + "..."))
 frozen_graph, input_names, output_names = build_detection_graph(
     config=config_path,
     checkpoint=checkpoint_path,

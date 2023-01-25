@@ -8,7 +8,7 @@ import tensorflow.contrib.tensorrt as trt
 import time
 import sys
 import signal
-from src.object_detector import ObjectDetection
+from .src.object_detector import ObjectDetection
 import os
 import datetime
 from submarine_msgs_srvs.msg import Detections
@@ -103,7 +103,7 @@ class JetsonLiveObjectDetection():
                         out.write(img)
                     elif args.test_picture is not None:
                         cv2.imwrite(names[0] + '_output.' + names[1], img)
-                    print ("Found objects: " + str(' '.join(new_detections)) + ".")
+                    print(("Found objects: " + str(' '.join(new_detections)) + "."))
                 else:
                     break
             if args.test_video is not None and not args.no_save_images:
@@ -111,7 +111,7 @@ class JetsonLiveObjectDetection():
             self.camera.release()
             self.detector.__del__()
             if (not args.no_save_images):
-                print("Output File written to " + names[0] + "_output." + names[1])
+                print(("Output File written to " + names[0] + "_output." + names[1]))
             exit()
 
     def start(self):
@@ -152,7 +152,7 @@ class JetsonLiveObjectDetection():
                     new_detections = None
                     img, new_detections = self._visualizeDetections(img, scores, boxes, classes, num_detections)
             
-                    print ("Found objects: " + str(' '.join(new_detections)) + ".")
+                    print(("Found objects: " + str(' '.join(new_detections)) + "."))
                     if (args.show_video):
                         cv2.imshow('Jetson Live Detection', img)
                     if ((img_counter % 3) == 0 and not args.no_save_images):
@@ -174,7 +174,7 @@ class JetsonLiveObjectDetection():
                         detections_msg.detected = [num_detections]
                         front_detections_pub.publish(detections_msg)
 
-                    print ("Network running at: " + str(1.0/(time.time() - curr_time)) + " Hz.")
+                    print(("Network running at: " + str(1.0/(time.time() - curr_time)) + " Hz."))
 
                 frame_counter += 1
             
@@ -214,7 +214,7 @@ class JetsonLiveObjectDetection():
         scores, boxes, classes, num_detections = self.detector.detect(img)
         new_detections = None
         img, new_detections = self._visualizeDetections(img, scores, boxes, classes, num_detections)
-        print ("Found Front objects: " + str(' '.join(new_detections)) + ".")
+        print(("Found Front objects: " + str(' '.join(new_detections)) + "."))
 
         img_msg = bridge.cv2_to_imgmsg(img)
         front_img_pub.publish(img_msg)
@@ -247,7 +247,7 @@ class JetsonLiveObjectDetection():
         scores, boxes, classes, num_detections = self.detector.detect(img)
         new_detections = None
         img, new_detections = self._visualizeDetections(img, scores, boxes, classes, num_detections)
-        print ("Found Bottom objects: " + str(' '.join(new_detections)) + ".")
+        print(("Found Bottom objects: " + str(' '.join(new_detections)) + "."))
 
         img_msg = bridge.cv2_to_imgmsg(img)
         #bottom_img_pub.publish(img_msg)

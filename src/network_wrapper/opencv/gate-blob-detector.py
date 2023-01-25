@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import numpy as np
 import cv2
@@ -117,7 +117,7 @@ def raw_img_callback(msg):
         cv2.imshow('gate_blob_detector', image)
         cv2.waitKey(1)
 
-    print('image processed', time.time())
+    print(('image processed', time.time()))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="This script gets a bounding box from an orange thing. Intended to be used for testing.")

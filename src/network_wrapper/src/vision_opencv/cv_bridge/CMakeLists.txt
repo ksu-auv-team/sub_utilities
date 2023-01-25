@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+make_minimum_required(VERSION 3.0.2)
 project(cv_bridge)
 
 find_package(catkin REQUIRED COMPONENTS rosconsole sensor_msgs)

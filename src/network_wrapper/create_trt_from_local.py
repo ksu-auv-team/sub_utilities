@@ -22,7 +22,7 @@ checkpoint_path = './data/' + args.model + '/model.ckpt'
 if(args.number is not None):
     checkpoint_path += '-' + args.number
 
-print ("Building detection graph from model " + args.model + "...")
+print(("Building detection graph from model " + args.model + "..."))
 frozen_graph, input_names, output_names = build_detection_graph(
     config=config_path,
     checkpoint=checkpoint_path,

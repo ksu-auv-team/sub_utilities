@@ -53,7 +53,7 @@
 #define PyInt_FromLong PyLong_FromLong
 #define PyNumber_Int PyNumber_Long
 
-// Python3 strings are unicode, these defines mimic the Python2 functionality.
+// Python3 strings are unicode, these defines mimic the python3 functionality.
 #define PyString_Check PyUnicode_Check
 #define PyString_FromString PyUnicode_FromString
 #define PyString_FromStringAndSize PyUnicode_FromStringAndSize

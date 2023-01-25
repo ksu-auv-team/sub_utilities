@@ -10,8 +10,8 @@ def readBoxClient(box, desiredValue):
         readBox = rospy.ServiceProxy('readBox', ReadBox)
         response = ReadBox(box, desiredValue)
         return response.value
-    except rospy.ServiceException, e:
-        print "Service call failed: %s"%e
+    except rospy.ServiceException as e:
+        print("Service call failed: %s"%e)
 def usage():
         return "%s [box desiredVaue]"%sys.argv[0]
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
                 box = sys.argv[1]
                 desiredValue = str(sys.argv[2])
         else:
-                print usage()
+                print(usage())
                 sys.exit(1)
-        print "Requesting box[%s]"%(desiredValue)
-        print "box[%s] =  %s"%(desiredValue, readBoxClient(box, desiredValue))
+        print("Requesting box[%s]"%(desiredValue))
+        print("box[%s] =  %s"%(desiredValue, readBoxClient(box, desiredValue)))

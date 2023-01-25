@@ -29,7 +29,7 @@ class Track_Torpedo(Sub):
 
         # Fail Fast
         if not self.active_launcher:
-            print('[TRACK_TORPEDO] - %s' % ('No available launch tubes'))
+            print(('[TRACK_TORPEDO] - %s' % ('No available launch tubes')))
             return 'hardware_failure'
         self.init_state()
         self.last_seen = rospy.get_time()

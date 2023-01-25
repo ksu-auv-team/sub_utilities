@@ -1,6 +1,6 @@
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
+
+
+
 
 import os
 import io
@@ -19,7 +19,7 @@ def __split(df, group):
     gb = df.groupby(group)
     return [
         data(filename, gb.get_group(x))
-        for filename, x in zip(gb.groups.keys(), gb.groups)
+        for filename, x in zip(list(gb.groups.keys()), gb.groups)
     ]
 
 

@@ -1,3 +1,0 @@
-[submodule "simulation/ardupilot"]
-	path = simulation/ardupilot
-	url = https://github.com/ksu-auv-team/ardupilot.git
