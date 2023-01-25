@@ -132,7 +132,8 @@ class SubSession():
         if(not self.simulated):
             movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/manualmode.launch"])
         else:
-            simulation_string = "sim_vehicle.py -v ArduSub -L Transdec --map --console"
+            # -L Transdec
+            simulation_string = "sim_vehicle.py -v ArduSub --map --console"
             simulation_commands = simulation_string.split()
             self.simulation_process = subprocess.Popen(simulation_commands, stdout=subprocess.PIPE)
             time.sleep(10) # Wait for the simulator to start up
