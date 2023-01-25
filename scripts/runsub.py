@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # launching things
 import os
@@ -22,13 +22,14 @@ import roslaunch
 from std_msgs.msg import Bool
 
 class SubSession():
-    def __init__(self, state_machine, arbitrary_machine, network_model, no_save_images, debug_execute, manual=False, simulated=False):
+    def __init__(self, state_machine, arbitrary_machine, network_model, no_save_images, no_network, debug_execute, manual=False, simulated=False):
         #Arguments
         self.manual_ = manual
         self.state_machine_ = state_machine
         self.arbitrary_machine_ = arbitrary_machine
         self.network_model_ = network_model
         self.no_save_images_ = no_save_images
+        self.no_network_ = no_network
         self.debug_execute_ = debug_execute
         self.simulated = simulated
 
@@ -179,7 +180,8 @@ class SubSession():
     #start ALL the things
     def start(self):     
         # Run the Video Node
-        self.curr_children.append(self.start_video())
+        if not self.no_save_images_ and not self.no_network_:
+            self.curr_children.append(self.start_video())
         
         self.delay_start = time.time() # The time we will compare our arduino time to
         while(time.time() - self.delay_start < 2 and not self.sub_is_killed):
@@ -265,7 +267,7 @@ if __name__ == '__main__':
     time.sleep(3)  # wait a bit to be sure the roscore is really launched
 
     # Create Subsession
-    go_sub_go = SubSession(args.state_machine, args.arbitrary_machine, args.network_model, args.no_save_images, args.debug_execute, args.manual, args.simulate)
+    go_sub_go = SubSession(args.state_machine, args.arbitrary_machine, args.network_model, args.no_save_images, args.no_network, args.debug_execute, args.manual, args.simulate)
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)

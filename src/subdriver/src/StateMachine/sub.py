@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 '''
 sub.py implements a common base class for all states used in the SubDriver
 state machine.

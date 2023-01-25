@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # Sub Vizualizer GUI using PySimpleGUI
 
 import PySimpleGUI as sg   

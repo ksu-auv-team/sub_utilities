@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import tensorflow.contrib.tensorrt as trt
 import sys
