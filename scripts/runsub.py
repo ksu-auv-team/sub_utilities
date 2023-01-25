@@ -136,7 +136,7 @@ class SubSession():
             simulation_string = "sim_vehicle.py -v ArduSub -L Transdec --map --console"
             simulation_commands = simulation_string.split()
             self.simulation_process = subprocess.Popen(simulation_commands, stdout=subprocess.PIPE)
-            time.sleep(10) # Wait for the simulator to start up
+            time.sleep(20) # Wait for the simulator to start up
             movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/simulated_mode.launch"])
         
         movement_launch.start()
@@ -265,7 +265,7 @@ if __name__ == '__main__':
 
     # Start roscore
     roscore = subprocess.Popen('roscore')
-    time.sleep(3)  # wait a bit to be sure the roscore is really launched
+    time.sleep(7)  # wait a bit to be sure the roscore is really launched
 
     # Create Subsession
     go_sub_go = SubSession(args.state_machine, args.arbitrary_machine, args.network_model, args.no_save_images, args.no_network, args.debug_execute, args.manual, args.simulate)
