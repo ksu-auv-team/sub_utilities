@@ -1,1 +1,4 @@
 
+[submodule "simulation/ardupilot"]
+	path = simulation/ardupilot
+	url = https://github.com/CoryBorek/ardupilot
