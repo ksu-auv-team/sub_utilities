@@ -1,0 +1,12 @@
+<launch>
+	<!--START PIXHAWK-->
+	<include file="$(find mavros)/launch/apm2.launch">
+            <!-- Override to simulator location -->
+            <arg name="fcu_url" value="udp://127.0.0.1:14551@14555" />
+    </include>
+    <param name="/mavros/conn/timesync_rate" value="0.0"/>
+
+	<!--START MANUAL CONTROL NODE-->
+    <node name="manual_control_node" pkg="movement_package" type="state_control_node" />
+ 
+</launch>

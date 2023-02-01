@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 
     ros::init(argc, argv, "state_control_node");
 
-    auto manualController = new controller::ManualController(2, 3, 1, 0, 5);
+    auto manualController = new controller::ManualController(3, 1, 4, 0, 2);
 
     try
     {

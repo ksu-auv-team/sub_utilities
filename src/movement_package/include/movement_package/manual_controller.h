@@ -13,6 +13,11 @@ class ManualController : public Controller
     private:
         bool _manualArmed;
         double _lastMsgRecieved;
+        int _lateral;
+        int _throttle;
+        int _forward;
+        int _yaw;
+        int _trigger;
 
         //@var _n nodehandle for ManualController
         ros::NodeHandle _n;
@@ -39,9 +44,10 @@ class ManualController : public Controller
         */
         void SafeArm();
 
+
     public:
 
-    ManualController();
+    ManualController(int lateral, int throttle, int forward, int yaw, int trigger);
 };
 
 }

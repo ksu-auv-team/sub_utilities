@@ -128,15 +128,25 @@ class SubSession():
         # Get a reference to the launch file
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         roslaunch.configure_logging(uuid)
-        if(not self.simulated):
-            movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/manualmode.launch"])
+
+        if self._manual:
+            if(not self.simulated):
+                movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/manualmode.launch"])
+            else:
+                simulation_string = "sim_vehicle.py -v ArduSub -L Transdec --map --console"
+                simulation_commands = simulation_string.split()
+                self.simulation_process = subprocess.Popen(simulation_commands, stdout=subprocess.PIPE)
+                time.sleep(10) # Wait for the simulator to start up
+                movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/simulated_mode.launch"])
         else:
-            simulation_string = "sim_vehicle.py -v ArduSub -L Transdec --map --console"
-            simulation_commands = simulation_string.split()
-            self.simulation_process = subprocess.Popen(simulation_commands, stdout=subprocess.PIPE)
-            time.sleep(10) # Wait for the simulator to start up
-            movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/simulated_mode.launch"])
-        
+               if(not self.simulated):
+                movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/statemode.launch"])
+            else:
+                simulation_string = "sim_vehicle.py -v ArduSub -L Transdec --map --console"
+                simulation_commands = simulation_string.split()
+                self.simulation_process = subprocess.Popen(simulation_commands, stdout=subprocess.PIPE)
+                time.sleep(10) # Wait for the simulator to start up
+                movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/simulated_state_mode.launch"]) 
         movement_launch.start()
 
         # return that reference

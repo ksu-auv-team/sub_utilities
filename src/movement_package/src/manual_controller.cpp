@@ -1,8 +1,14 @@
 #include "manual_controller.h"
 using namespace controller;
 
-ManualController::ManualController()
+ManualController::ManualController(int lateral, int throttle, int forward, int yaw, int trigger)
 {
+
+    _lateral = lateral;
+    _throttle = throttle;
+    _forward = forward;
+    _yaw = yaw;
+    _trigger = trigger;
     _joyStickSub = _n.subscribe("joy", 10, &ManualController::JoyStickCallback, this);
 
     _n.setParam("joy_node/dev", "/dev/input/js0");
@@ -30,7 +36,7 @@ void ManualController::SafeArm()
 {
     int messageTime(ros::Time::now().toSec() - _lastMsgRecieved);
     if (!_manualArmed){
-        auto trigger_val = _joyMsg.axes[5];
+        auto trigger_val = _joyMsg.axes[_trigger];
         if (trigger_val < -0.5 && messageTime < 60)//trigger pressed
         {
             this->Arm();
@@ -39,7 +45,7 @@ void ManualController::SafeArm()
     }
     else //armed
     {
-    auto trigger_val = _joyMsg.axes[5];
+    auto trigger_val = _joyMsg.axes[_trigger];
     if (trigger_val >= -0.5) // trigger not pressed
      {
         this->Disarm();
@@ -58,10 +64,10 @@ void ManualController::ProcessChannels()
     SafeArm();//trigger-arm
 
     // VALIDATE THAT THESE ARE STILL GOOD, had
-    float lateral_input  = _joyMsg.axes[2];
-    float forward_input  = _joyMsg.axes[3];
-    float throttle_input = _joyMsg.axes[1];
-    float yaw_input      = _joyMsg.axes[0];
+    float lateral_input  = _joyMsg.axes[_lateral];
+    float forward_input  = _joyMsg.axes[_forward];
+    float throttle_input = _joyMsg.axes[_throttle];
+    float yaw_input      = _joyMsg.axes[_yaw];
     MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, lateral_input*-500 + MID_PWM);//right stick left-right
     MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, forward_input*500 + MID_PWM);//right stick up-down
     MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, throttle_input*500 + MID_PWM);//left stick up-down

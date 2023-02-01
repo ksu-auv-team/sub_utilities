@@ -1,0 +1,11 @@
+<launch>
+	<!--START PIXHAWK-->
+	<include file="$(find mavros)/launch/apm2.launch" respawn="true">
+            <!-- Override /dev location -->
+            <arg name="fcu_url" value="/dev/pixhawk:57600" />
+    </include>
+
+	<!--START MANUAL CONTROL NODE-->
+    <node name="manual_control_node" pkg="movement_package" type="state_control_node" />
+ 
+</launch>
