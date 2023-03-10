@@ -13,6 +13,8 @@ ManualController::ManualController()
     // Need to find a way to allow people to be dumb and use
     // buttons for axes and viceversa
     // also to allow inverse for axes
+
+    // UUUUUUUGGGHHHH might have to make _joyMsg a pointer
     std::unordered_map<std::string, uint8_t> axes_map = {
         {"LLR", 0}, // Left thumbstick Left/right
         {"LUD", 1}, // Left thumbstick Up/Down
