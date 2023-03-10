@@ -71,6 +71,7 @@ void ManualController::SafeArm()
     }
     else //armed
     {
+        // Going to have to know if this is a button if we allow arm to be a button
     if (_joyMsg.axes[2] >= -0.5) // trigger not pressed
      {
         this->Disarm();
