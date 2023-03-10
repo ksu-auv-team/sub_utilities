@@ -1,0 +1,45 @@
+############################################################################################
+# As of 03/09/23 we use an Xbox 360 controller with the joy msg from ROS
+# The "joy" message is broken up into 11 buttons and 8 axes
+#
+#   Default Axes:
+#       [0] LLR (Left thumb stick left/right)
+#       [1] LUD (Left thumb stick up/down)
+#       [2] LT  (Left Trigger)
+#       [3] RLR (Right thumb stick left/right)
+#       [4] RUD (Right thumb stick up/down)
+#       [5] RT  (Right Tigger)
+#       [6] DP1  D-Pad??? These are confusing, might be a controller issue
+#       [7] DP2  D-Pad??? These might not work???
+#
+#   Default Buttons:
+#       [0] A
+#       [1] B
+#       [2] X
+#       [3] Y
+#       [4] LB (Left Bumper)
+#       [5] RB (Right Bumper)
+#       [6] SELECT
+#       [7] START
+#       [8] XB (Xbox Button)
+#       [9] L3
+#       [10] R3
+#############################################################################################
+#
+#  So far, although the sub is 6 DOF,
+#  we only use 4 DOF and we expect them to be controlled only by axes
+#      - Forward/Backwards (FrontBack) Default: RUD
+#      - Left/Right (strafe)           Default: RLR
+#      - Yaw (AKA rotate)              Default: LLR
+#      - Elevation (AKA vertical)      Default: LUD
+#
+#  we also require you to hold down the arm button the entire time (Note: This should be an axes or maybe make it togglable?)
+#      - Arm Default: LT (at least half way down)
+
+arm: "LT"
+frontback: "RUD"
+strafe: "RLR"
+yaw: "LLR"
+vertical: "LUD"
+
+
