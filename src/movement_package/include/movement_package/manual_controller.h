@@ -5,6 +5,8 @@
 #include "controller.h"
 #include <sensor_msgs/Joy.h>
 
+#include <memory> // for shared ptr
+
 namespace controller
 {
 
@@ -38,6 +40,8 @@ class ManualController : public Controller
         Manages armed status
         */
         void SafeArm();
+
+        std::shared_ptr<float> _forward, _lateral, _throttle, _yaw, _arm;
 
     public:
 
