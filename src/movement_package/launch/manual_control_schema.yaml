@@ -9,8 +9,8 @@
 #       [3] RLR (Right thumb stick left/right)
 #       [4] RUD (Right thumb stick up/down)
 #       [5] RT  (Right Tigger)
-#       [6] DP1  D-Pad??? These are confusing, might be a controller issue
-#       [7] DP2  D-Pad??? These might not work???
+#       [6] DPLR D-Pad Left/Right Left=-1, Right=1
+#       [7] DPUP D-Pad Up/Down    Up=1, Down=-1
 #
 #   Default Buttons:
 #       [0] A
@@ -35,11 +35,13 @@
 #
 #  we also require you to hold down the arm button the entire time (Note: This should be an axes or maybe make it togglable?)
 #      - Arm Default: LT (at least half way down)
-
-arm: "LT"
-frontback: "RUD"
-strafe: "RLR"
-yaw: "LLR"
-vertical: "LUD"
+manual_controls:
+  # If override_controls if true then use the specified controls below, else use the defaults from above
+  override_controls: true
+  arm: "LT"
+  frontback: "RUD"
+  strafe: "RLR"
+  yaw: "LLR"
+  vertical: "LUD"
 
 
