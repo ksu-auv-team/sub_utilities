@@ -13,6 +13,8 @@ class ManualController : public Controller
     private:
         bool _manualArmed;
         double _lastMsgRecieved;
+        ros::ServiceClient _arm_srv;
+        mavros_msgs::CommandLong _cmd_long;
 
         //@var _n nodehandle for ManualController
         ros::NodeHandle _n;
