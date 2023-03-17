@@ -39,7 +39,7 @@ class SubSession():
         self.simulation_process = None
         self.curr_children = []
         self.startup_processes = []
-        
+
         # Arduino variables
         self.delay_start = 0
         self.sub_is_killed = False
@@ -48,7 +48,7 @@ class SubSession():
         self.script_directory = os.path.dirname(os.path.realpath(__file__)) + '/'
         self.curr_log_dir = self.script_directory + '../logs/{}/'.format(datetime.datetime.now())
         os.mkdir(self.curr_log_dir)
-        
+
         # ROS subscribers
         killswitch_start_sub = rospy.Subscriber("killswitch_run_start", Bool, self.killswitch_start_callback)
         killswitch_realtime_sub = rospy.Subscriber("killswitch_is_killed", Bool, self.killswitch_realtime_callback, queue_size=1)
@@ -63,7 +63,7 @@ class SubSession():
             except Exception as e:
                 print(e)
         del self.curr_children[:]
-        
+
         # Because manualmode is a launch file, we have to stop it separately
         try:
             self.movement_node.shutdown()
@@ -91,7 +91,7 @@ class SubSession():
                 self.simulation_process.kill()
             except Exception as e:
                 print(e)
-        
+
         print("Removed Startup Process!")
 
     def start_video(self):
@@ -103,7 +103,8 @@ class SubSession():
         video = roslaunch.core.Node(package, executable, args=self.no_save_images_)
 
         # Launch the node
-        video_node = self.launcher.launch(video)
+        uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+        video_node = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/video_stream_opencv/launch/webcam.launch"])
 
         # Return the reference to the node
         return video_node
@@ -136,7 +137,7 @@ class SubSession():
             self.simulation_process = subprocess.Popen(simulation_commands, stdout=subprocess.PIPE)
             time.sleep(10) # Wait for the simulator to start up
             movement_launch = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/movement_package/launch/simulated_mode.launch"])
-        
+
         movement_launch.start()
 
         # return that reference
@@ -161,7 +162,7 @@ class SubSession():
 
         # Return the reference to the node
         return execute_node
-                
+
     def start_arduino(self):
         rospy.loginfo("Starting the arduino node")
 
@@ -177,10 +178,10 @@ class SubSession():
         return arduino_node
 
     #start ALL the things
-    def start(self):     
+    def start(self):
         # Run the Video Node
         self.curr_children.append(self.start_video())
-        
+
         self.delay_start = time.time() # The time we will compare our arduino time to
         while(time.time() - self.delay_start < 2 and not self.sub_is_killed):
             pass
@@ -197,7 +198,7 @@ class SubSession():
             rospy.loginfo('Manual Mode enabled, start your joystick node')
         else:
             self.curr_children.append(self.start_execute())
-        
+
         rospy.loginfo('exiting start')
 
     # This function captures the Ctrl+C and exits the function cleanly
@@ -208,8 +209,8 @@ class SubSession():
 
         # Kill roscore
         bashCommand = "pkill -f ros"
-        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE) 
-        
+        process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+
         # Copy the logs to a local folder
         self.copytree(os.path.expanduser("~") + "/.ros/log/latest", self.curr_log_dir)
 
@@ -224,7 +225,7 @@ class SubSession():
         else:
             rospy.loginfo('Sub has been killed')
             self.kill_children()
-            
+
     # This killswitch triggers every time step from the arduino in real time.
     def killswitch_realtime_callback(self, msg):
             self.sub_is_killed = msg.data
@@ -238,7 +239,7 @@ class SubSession():
                 shutil.copytree(s, d, symlinks, ignore)
             else:
                 shutil.copy2(s, d)
-        
+
 
 def create_args():
 	# Parse command line arguments:
@@ -269,7 +270,7 @@ if __name__ == '__main__':
 
     # captureing Ctrl+C
     signal.signal(signal.SIGINT, go_sub_go.signal_handler)
-    
+
     # Ros init
     rospy.init_node("run_sub")
 
@@ -282,7 +283,7 @@ if __name__ == '__main__':
         if args.start_bottom_network:
             bottom_pub = rospy.Publisher('enable_bottom_network', Bool, queue_size=1)
             bottom_pub.publish(True)
-    
+
     # If we are running without an arduino hooked up, just run the start, don't wait for the killswitch to be pressed
     if args.no_arduino:
         if(not args.no_network):
