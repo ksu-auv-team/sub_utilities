@@ -97,12 +97,6 @@ class SubSession():
     def start_video(self):
         rospy.loginfo("Starting the video node")
 
-        # Get a node reference
-        package = 'camera_utilities'
-        executable = 'camera_node.py'
-        video = roslaunch.core.Node(package, executable, args=self.no_save_images_)
-
-        # Launch the node
         uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
         video_node = roslaunch.parent.ROSLaunchParent(uuid, [self.script_directory + "../src/video_stream_opencv/launch/webcam.launch"])
 
