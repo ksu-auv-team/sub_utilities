@@ -12,6 +12,17 @@ ManualController::ManualController()
     _joyMsg.axes = {-0.0, -0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     _joyMsg.buttons = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+    /*
+        Below sets up the command that needs to be sent to the pixhawk based on user input.
+    */
+    _srv.request.command = 183; // command to send. should link to MAV_CMD_DO_SET_SERVO
+    __srv.request.param1 = 9; // pins on the pixhawk are 1 - indexed according to documentation
+    _srv.request.param3 = 0; 
+    _srv.request.param4 = 0; 
+    _srv.request.param5 = 0; 
+    _srv.request.param6 = 0; 
+    _srv.request.param7 = 0;
+
     this->Arm();
 
     this->Sequencing();
@@ -55,31 +66,40 @@ void ManualController::SafeArm()
 
 void ManualController::ProcessChannels()
 {
-    SafeArm();//trigger-arm
-    if (_joyMsg.buttons[2]) {
-    //     ROS_INFO_STREAM("_joyMsg.buttons[2] " << _joyMsg.buttons[2]);
-    //     // send mavros command message
-        // mavros_msgs::CommandLong srv;
-        // for (;;) {
-            // ROS_WARN_STREAM("sERVO " << i);
-            _cmd_long.request.command = 183;
-            _cmd_long.request.param1 = 8; // servos are 1-indexed here
-            _cmd_long.request.param2 = 1450; // pwm
-            _cmd_long.request.param3 = 0; // servos are 1-indexed here
-            _cmd_long.request.param4 = 0; // servos are 1-indexed here
-            _cmd_long.request.param5 = 0; // servos are 1-indexed here
-            _cmd_long.request.param6 = 0; // servos are 1-indexed here
-            _cmd_long.request.param7 = 0; // servos are 1-indexed here
+    /*
+        So according to this site: https://ardupilot.org/copter/docs/common-servo.html, the servos are indexed starting at 0 not 1. 
+        Its located in the following section: Controlling the servo as a servo. 
 
-            bool result = _arm_srv.call(_cmd_long);
-            if (result) {
-                ROS_INFO("DID IT WORK?");
-            } else {
-                ROS_INFO("it NO WORK");
-            }
-            // std::this_thread::sleep_for(std::chrono::seconds(3));
-        // }
+        So in our code, writing to Pin 9 is actually the SERVO8_FUNCTION in QGroundControl. This might cause some problems when
+        going back to Meta Knight.
+    */
+    SafeArm();//trigger-arm
+
+    /*
+        If either Xbox button X or Y is pressed change the second parameter to match the needed PWM value
+    */
+    if (_joyMsg.buttons[2] || _joyMsg.buttons[3]) {
+        if (_joyMsg.buttons[2]) {
+            _srv.request.param2 = 1100; // pwm
+        } else if (_joyMsg.buttons[3]) {
+            _srv.request.param2 = 1900; // pwm
+        }
+    } else {
+        srv.request.param2 = 1500; // pwm
     }
+
+    /*
+        Send the command and receive the result
+    */
+    bool result = _arm_srv.call(_srv);
+        
+
+    /*
+        Print the debug to the ROS terminal/log
+    */    
+    // if (result) {
+    //     ROS_INFO("Result Value %d   Command sent: %d    Pin Selected: %.0f    PWM Value Sent: %.0f", result, srv.request.command, srv.request.param1, srv.request.param2);
+    // }   
 
     MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _joyMsg.axes[3]*-500 + MID_PWM);//right stick left-right
     MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _joyMsg.axes[4]*500 + MID_PWM);//right stick up-down
