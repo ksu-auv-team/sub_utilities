@@ -41,7 +41,14 @@ class ManualController : public Controller
         */
         void SafeArm();
 
-        std::shared_ptr<float> _forward, _lateral, _throttle, _yaw, _arm;
+        int _lateral = 3;
+        int _forward = 4;
+        int _throttle = 1;
+        int _yaw = 0;
+        int _arm = 2;
+        int _armTimeoutSec = 60;
+
+        bool _inverse_forward, _inverse_lateral, _inverse_yaw, _inverse_throttle = false;
 
     public:
 
