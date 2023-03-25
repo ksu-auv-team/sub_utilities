@@ -7,5 +7,6 @@
 
 	<!--START MANUAL CONTROL NODE-->
     <node name="manual_control_node" pkg="movement_package" type="manual_control_node" />
- 
+    <rosparam command="load" file="$(find movement_package)/launch/manual_control_schema.yaml" />
+
 </launch>

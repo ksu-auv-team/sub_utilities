@@ -1,0 +1,52 @@
+############################################################################################
+# As of 03/09/23 we use an Xbox 360 controller with the joy msg from ROS
+# The "joy" message is broken up into 11 buttons and 8 axes
+#
+#   Default Axes:
+#       [0] LLR (Left thumb stick left/right)
+#       [1] LUD (Left thumb stick up/down)
+#       [2] LT  (Left Trigger)
+#       [3] RLR (Right thumb stick left/right)
+#       [4] RUD (Right thumb stick up/down)
+#       [5] RT  (Right Tigger)
+#       [6] DPLR D-Pad Left/Right Left = -1, Right = 1
+#       [7] DPUP D-Pad Up/Down    Up = 1, Down = -1
+#
+#       IF YOU WANT TO INVERSE A CONTROL (I.e. instead of up going forward and down going back, up goes back and down goes forward)
+#       ADD i INFRONT OF THE AXES
+#       EX: iLLR, iLUD, iRLR, iRUD, iDPLR, iDPUP
+#
+#   Default Buttons:
+#       [0] A
+#       [1] B
+#       [2] X
+#       [3] Y
+#       [4] LB (Left Bumper)
+#       [5] RB (Right Bumper)
+#       [6] SELECT
+#       [7] START
+#       [8] XB (Xbox Button)
+#       [9] L3
+#       [10] R3
+#############################################################################################
+#
+#  So far, although the sub is 6 DOF,
+#  we only use 4 DOF and we expect them to be controlled only by axes
+#      - Forward/Backwards (FrontBack) Default: RUD
+#      - Left/Right (strafe)           Default: RLR
+#      - Yaw (AKA rotate)              Default: LLR
+#      - Elevation (AKA vertical)      Default: LUD
+#
+#  we also require you to hold down the arm button the entire time (Note: This should be an axes or maybe make it togglable?)
+#      - Arm Default: LT (at least half way down)
+manual_controls:
+  # If override_controls if true then use the specified controls below, else use the defaults from above
+  override_controls: true
+  arm: "LT"
+  frontback: "RUD"
+  strafe: "RLR"
+  yaw: "LLR"
+  vertical: "LUD"
+  arm_timeout_sec: 120
+
+
