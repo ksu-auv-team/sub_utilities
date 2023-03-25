@@ -123,14 +123,13 @@ void ManualController::JoyStickCallback(const sensor_msgs::Joy& msg)
 {
     _lastMsgRecieved = ros::Time::now().toSec();
     _joyMsg = msg;
-    ROS_WARN_STREAM("_joyMsg " << _joyMsg.axes[2]);
 }
 
 void ManualController::SafeArm()
 {
     int messageTime(ros::Time::now().toSec() - _lastMsgRecieved);
     if (!_manualArmed){
-        if (_joyMsg.axes[2] < -0.5 && messageTime < 60)//trigger pressed
+        if (_joyMsg.axes[_arm] < -0.5 && messageTime < _armTimeoutSec)//trigger pressed
         {
             this->Arm();
             _manualArmed = true;
@@ -139,12 +138,12 @@ void ManualController::SafeArm()
     else //armed
     {
         // Going to have to know if this is a button if we allow arm to be a button
-    if (_joyMsg.axes[2] >= -0.5) // trigger not pressed
+    if (_joyMsg.axes[_arm] >= -0.5) // trigger not pressed
      {
         this->Disarm();
         _manualArmed = false;
     }
-    else if(messageTime > 60)
+    else if(messageTime > _armTimeoutSec)
     {
         this->Disarm();
         _manualArmed = false;
@@ -155,16 +154,15 @@ void ManualController::SafeArm()
 void ManualController::ProcessChannels()
 {
     SafeArm();//trigger-arm
-    std::cout << "_forward " << *_forward << std::endl;
-    std::cout << "_lateral " << *_lateral << std::endl;
-    std::cout << "_throttle " << *_throttle << std::endl;
-    std::cout << "_yaw " << *_yaw << std::endl;
 
-    MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, _joyMsg.axes[3]*-500 + MID_PWM);//right stick left-right
-    MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, _joyMsg.axes[4]*500 + MID_PWM);//right stick up-down
-    MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, _joyMsg.axes[1]*500 + MID_PWM);//left stick up-down
-    MavrosCommunicator->SetOverrideMessage(YAW_CHAN, _joyMsg.axes[0]*-500 + MID_PWM);//left stick left-right
+    int lateral  = (_joyMsg.axes[_lateral] * (_inverse_lateral ? -1 : 1)) * -500;
+    int forward  = (_joyMsg.axes[_forward]* (_inverse_forward ? -1 : 1)) * 500;
+    int throttle = (_joyMsg.axes[_throttle] * (_inverse_throttle ? -1 : 1)) * 500;
+    int yaw      = (_joyMsg.axes[_yaw] * (_inverse_yaw ? -1 : 1)) * -500;
 
-    //amateur hour
-    //MavrosCommunicator->SetOverrideMessage()
+    MavrosCommunicator->SetOverrideMessage(LATERAL_CHAN, (lateral + MID_PWM)); // DEFAULT: right stick left-right
+    MavrosCommunicator->SetOverrideMessage(FORWARD_CHAN, (forward + MID_PWM));  // DEFAULT right stick up-down
+    MavrosCommunicator->SetOverrideMessage(THROTTLE_CHAN, (throttle + MID_PWM)); // DEFAULT left stick up-down
+    MavrosCommunicator->SetOverrideMessage(YAW_CHAN, (yaw + MID_PWM)); //DEFAULT left stick left-right
+
 }
