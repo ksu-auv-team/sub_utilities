@@ -9,8 +9,12 @@
 #       [3] RLR (Right thumb stick left/right)
 #       [4] RUD (Right thumb stick up/down)
 #       [5] RT  (Right Tigger)
-#       [6] DPLR D-Pad Left/Right Left=-1, Right=1
-#       [7] DPUP D-Pad Up/Down    Up=1, Down=-1
+#       [6] DPLR D-Pad Left/Right Left = -1, Right = 1
+#       [7] DPUP D-Pad Up/Down    Up = 1, Down = -1
+#
+#       IF YOU WANT TO INVERSE A CONTROL (I.e. instead of up going forward and down going back, up goes back and down goes forward)
+#       ADD i INFRONT OF THE AXES
+#       EX: iLLR, iLUD, iRLR, iRUD, iDPLR, iDPUP
 #
 #   Default Buttons:
 #       [0] A
@@ -43,5 +47,6 @@ manual_controls:
   strafe: "RLR"
   yaw: "LLR"
   vertical: "LUD"
+  arm_timeout_sec: 120
 
 
