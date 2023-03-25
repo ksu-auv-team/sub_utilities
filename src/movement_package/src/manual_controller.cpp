@@ -17,19 +17,23 @@ ManualController::ManualController()
     _n.getParam("/manual_controls/override_controls", override_controls);
 
     if (override_controls) {
-        // Need to find a way to allow people to be dumb and use
-        // buttons for axes and viceversa
-        // also to allow inverse for axes
 
+        // THERE'S A BETTER WAY TO DO INVERSE FOR SPECIFIC DIRECTIONS BUT I AM LAZY
         std::unordered_map<std::string, uint8_t> axes_map = {
-            {"LLR", 0}, // Left thumbstick Left/right
-            {"LUD", 1}, // Left thumbstick Up/Down
-            {"LT", 2},  // Left trigger
-            {"RLR", 3}, // Right thumbstick Left/Right
-            {"RUD", 4}, // Right thumbstick Up/Down
-            {"RT", 5},  // Right Trigger
-            {"DP1", 6}, // D-Pad NOTE: PROBABLY DOESN'T WORK
-            {"DP2", 7}, // D-Pad NOTE: PROBABLY DOESN'T WORK
+            {"LLR", 0},   // Left thumbstick Left/right
+            {"iLLR", 0},  // INVERSE Left thumbstick Left/right
+            {"LUD", 1},   // Left thumbstick Up/Down
+            {"iLUD", 1},  // INVERSE left thumbstick Up/Down
+            {"LT", 2},    // Left trigger
+            {"RLR", 3},   // Right thumbstick Left/Right
+            {"iRLR", 3},  // INVERSE Right thumbstick Left/Right
+            {"RUD", 4},   // Right thumbstick Up/Down
+            {"iRUD", 4},  // INVERSE Right thumbstick Up/Down
+            {"RT", 5},    // Right Trigger
+            {"DPLR", 6},  // D-Pad Left-Right
+            {"iDPLR", 6}, // INVERSE D-Pad Left-Right
+            {"DPUD", 7},  // D-Pad Up-Down
+            {"iDPUD", 7}  // INVERSE D-Pad Up-Down
         };
 
         std::unordered_map<std::string, uint8_t> buttons_map = {
@@ -43,7 +47,7 @@ ManualController::ManualController()
             {"START", 7},
             {"XB", 8}, // Xbox Button
             {"L3", 9}, // Click in left stick
-            {"R3", 10}, // Click in right stick
+            {"R3", 10} // Click in right stick
         };
 
         // There is def a better way of doing this but I'm drunk rn so enjoy this lambda
@@ -73,15 +77,14 @@ ManualController::ManualController()
         };
 
         /**
-         *  * /manual_controls/arm: LT
+         * /manual_controls/arm: LT
          * /manual_controls/frontback: RUD
          * /manual_controls/override_controls: True
          * /manual_controls/strafe: RLR
          * /manual_controls/vertical: LUD
          * /manual_controls/yaw: LLR
         */
-        std::string forward, lateral, throttle, yaw;
-        bool arm;
+        std::string forward, lateral, throttle, yaw, arm;
         _n.getParam("/manual_controls/frontback", forward);
         _n.getParam("/manual_controls/strafe", lateral);
         _n.getParam("/manual_controls/vertical", throttle);
@@ -89,14 +92,22 @@ ManualController::ManualController()
         _n.getParam("/manual_controls/arm", arm);
 
         ROS_INFO_STREAM("forward " << forward <<  " lateral " << lateral << " throttle " << throttle << " yaw " << yaw);
+        _inverse_forward = tolower(forward[0]) == 'i' ? true : false;
+        _forward  = parseAxesControlSchema(forward, _forward);
 
-        // UUUUUUUGGGGGGGGGGHHHHHHHHHHHH thought I could get around pointers but I guess not
-        // Might just force axes to be axes and only worry about arming???
-        // _forward = parseControlSchema(forward);
-        // _lateral = parseControlSchema(lateral);
-        // _throttle = parseControlSchema(throttle);
-        // _yaw = parseControlSchema(yaw);
+        _inverse_lateral = tolower(lateral[0]) == 'i' ? true : false;
+        _lateral  = parseAxesControlSchema(lateral, _lateral);
+
+        _inverse_throttle = tolower(throttle[0]) == 'i' ? true : false;
+        _throttle = parseAxesControlSchema(throttle, _throttle);
+
+        _inverse_yaw = tolower(yaw[0]) == 'i' ? true : false;
+        _yaw      = parseAxesControlSchema(yaw, _yaw);
+
+        _arm      = parseAxesControlSchema(arm, _arm);
     }
+
+    _n.getParam("/manual_controls/arm_timeout_sec", _armTimeoutSec);
 
     this->Arm();
 
