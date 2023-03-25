@@ -47,21 +47,28 @@ ManualController::ManualController()
         };
 
         // There is def a better way of doing this but I'm drunk rn so enjoy this lambda
-        auto parseControlSchema = [&, a_map = axes_map, b_map = buttons_map](std::string controller_input) {
+        auto parseAxesControlSchema = [&, a_map = axes_map](std::string controller_input, uint8_t default_value) {
             // first check if the control we want to override is in the axis map
-            // it = iterator
             auto it = a_map.find(controller_input);
             // if the iterator has not reached the end of the map (meaning the key does exist)
             // maps have a "null pointer" that exists after the last index, .end() gives us that last index
             if (it != a_map.end()) {
-                return std::make_shared<float>(_joyMsg.axes[a_map.at(controller_input)]);
-            } else { // didn't find it in the axes map, try the buttons map
-                auto it_2 = b_map.find(controller_input);
-                if (it_2 != b_map.end()) {
-                    return std::make_shared<float>(_joyMsg.buttons[b_map.at(controller_input)]);
-                } else {
-                    ROS_WARN_STREAM("Control input by name " << controller_input << " does not exist in the button layout!");
-                }
+                return it->second;
+            } else { // If we could not find the ID in the map,use the defaut value
+                return default_value;
+            }
+        };
+
+        // There is def a better way of doing this but I'm drunk rn so enjoy this lambda
+        auto parsButtonControlSchema = [&, b_map = buttons_map](std::string controller_input, uint8_t default_value) {
+            // first check if the control we want to override is in the axis map
+            auto it = b_map.find(controller_input);
+            // if the iterator has not reached the end of the map (meaning the key does exist)
+            // maps have a "null pointer" that exists after the last index, .end() gives us that last index
+            if (it != b_map.end()) {
+                return b_map.at(controller_input);
+            } else { // If we could not find the ID in the map,use the defaut value
+                return default_value;
             }
         };
 
