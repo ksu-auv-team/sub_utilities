@@ -12,12 +12,12 @@ import io
 class ROSCameraViewer:
     def __init__(self):
         self.bridge = CvBridge()
-        self.image_sub = rospy.Subscriber("/usb_cam/image_raw", Image, self.image_callback)
+        self.image_sub = rospy.Subscriber("/usb_cam_cam/image_raw", Image, self.image_callback)
         self.current_frame = None
 
     def image_callback(self, msg):
         try:
-            cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            cv_image = self.bridge.imgmsg_to_cv2(msg, "rgb8")
             self.current_frame = cv_image
         except CvBridgeError as e:
             print(e)
