@@ -1,3 +1,3 @@
 <launch>
-  <node name="data_collector_node" pkg="data_collector_node" type="data_collector_node.py" output="screen"/>
+  <node name="data_collector_node" pkg="data_collector_node" type="../src/data_collector_node.py" output="screen"/>
 </launch>
