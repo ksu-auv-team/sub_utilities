@@ -30,7 +30,7 @@ class App:
         self.image_sub = rospy.Subscriber("/usb_cam/image_raw", Image, self.image_callback)
         self.current_frame = None
 
-        self.data = rospy.Subscriber("/data", StringVar, self.grab_data)
+        # self.data = rospy.Subscriber("/data", StringVar, self.grab_data)
 
         master.after(10, self.update_image)
         self.update_label()
@@ -51,14 +51,15 @@ class App:
             self.canvas.image = photo
         self.master.after(10, self.update_image)
 
-    def grab_data(self):
-        # Grab data from ROS
-        data = rospy.get_param("/data")
-        return data
+    # def grab_data(self):
+    #     # Grab data from ROS
+    #     data = rospy.get_param("/data")
+    #     return data
 
     def update_label(self):
         # get updated data
-        data = self.grab_data()
+        # data = self.grab_data()
+        data = [0, 1, 2]
         # parse data
         temp = "Temperature: {}".format(data[0])
         hum = "Humidity: {}".format(data[1])
