@@ -11,33 +11,36 @@ class App:
         self.master = master
         master.title("ROS Camera Viewer")
 
-        self.canvas = Canvas(master, width=640, height=480)
+        self.canvas = Canvas(master, width=1280, height=720)
         self.canvas.pack(fill=BOTH, expand=1)
 
-        self.label_text = StringVar()
-        self.label = Label(master, textvariable=self.label_text)
-        self.label.pack()
+        # self.label_text = StringVar()
+        # self.label = Label(master, textvariable=self.label_text)
+        # self.label.pack()
 
-        self.label_text_2 = StringVar()
-        self.label_2 = Label(master, textvariable=self.label_text_2)
-        self.label_2.pack()
+        # self.label_text_2 = StringVar()
+        # self.label_2 = Label(master, textvariable=self.label_text_2)
+        # self.label_2.pack()
 
-        self.label_text_3 = StringVar()
-        self.label_3 = Label(master, textvariable=self.label_text_3)
-        self.label_3.pack()
+        # self.label_text_3 = StringVar()
+        # self.label_3 = Label(master, textvariable=self.label_text_3)
+        # self.label_3.pack()
 
         self.bridge = CvBridge()
-        self.image_sub = rospy.Subscriber("/usb_cam/image_raw", Image, self.image_callback)
+        print("1")
+        self.image_sub = rospy.Subscriber("/usb_cam_cam/image_raw", Image, self.image_callback)
+        print("2")
         self.current_frame = None
 
         # self.data = rospy.Subscriber("/data", StringVar, self.grab_data)
 
         master.after(10, self.update_image)
-        self.update_label()
+        # self.update_label()
 
     def image_callback(self, msg):
         try:
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            print("Received image with size: {}".format(cv_image.shape))
             self.current_frame = cv_image
         except CvBridgeError as e:
             print(e)
@@ -51,14 +54,14 @@ class App:
             self.canvas.image = photo
         self.master.after(10, self.update_image)
 
-    # def grab_data(self):
-    #     # Grab data from ROS
-    #     data = rospy.get_param("/data")
-    #     return data
+    def grab_data(self):
+        # Grab data from ROS
+        data = rospy.get_param("/data")
+        return data
 
     def update_label(self):
         # get updated data
-        # data = self.grab_data()
+        data = self.grab_data()
         data = [0, 1, 2]
         # parse data
         temp = "Temperature: {}".format(data[0])
