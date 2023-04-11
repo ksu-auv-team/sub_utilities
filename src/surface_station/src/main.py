@@ -18,6 +18,7 @@ class ROSCameraViewer:
     def image_callback(self, msg):
         try:
             cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            print("Received image with size: {}".format(cv_image.shape))
             self.current_frame = cv_image
         except CvBridgeError as e:
             print(e)
