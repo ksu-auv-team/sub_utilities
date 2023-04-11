@@ -70,7 +70,7 @@ ManualController::ManualController()
             // if the iterator has not reached the end of the map (meaning the key does exist)
             // maps have a "null pointer" that exists after the last index, .end() gives us that last index
             if (it != b_map.end()) {
-                return b_map.at(controller_input);
+                return it->second;
             } else { // If we could not find the ID in the map,use the defaut value
                 return default_value;
             }
