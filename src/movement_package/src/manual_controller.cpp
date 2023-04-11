@@ -43,7 +43,7 @@ void ManualController::SafeArm()
 {
     int messageTime(ros::Time::now().toSec() - _lastMsgRecieved);
     if (!_manualArmed){
-        if (true/*_joyMsg.axes[2] < -0.5 && messageTime < 60*/)//trigger pressed
+        if (_joyMsg.axes[2] < -0.5 && messageTime < 60)//trigger pressed
         {
             this->Arm();
             _manualArmed = true;
@@ -51,16 +51,16 @@ void ManualController::SafeArm()
     }
     else //armed
     {
-    if (false)//_joyMsg.axes[2] >= -0.5) // trigger not pressed
-     {
-        this->Disarm();
-        _manualArmed = false;
-    }
-    else if(false)// messageTime > 60)
-    {
-        this->Disarm();
-        _manualArmed = false;
-    }
+        if (_joyMsg.axes[2] >= -0.5) // trigger not pressed
+        {
+            this->Disarm();
+            _manualArmed = false;
+        }
+        else if(messageTime > 60)
+        {
+            this->Disarm();
+            _manualArmed = false;
+        }
     }
 }
 
