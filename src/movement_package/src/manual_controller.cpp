@@ -82,12 +82,12 @@ void ManualController::ProcessChannels()
     */
     if (_joyMsg.buttons[2] || _joyMsg.buttons[3]) {
         if (_joyMsg.buttons[2]) {
-            _srv.request.param2 = 1100; // pwm
+            _srv.request.param2 = ARM_CLOSE;
         } else if (_joyMsg.buttons[3]) {
-            _srv.request.param2 = 1900; // pwm
+            _srv.request.param2 = ARM_OPEN;
         }
     } else {
-        srv.request.param2 = 1500; // pwm
+        srv.request.param2 = ARM_NEUTRAL;
     }
 
     bool result = _arm_srv.call(_srv);
