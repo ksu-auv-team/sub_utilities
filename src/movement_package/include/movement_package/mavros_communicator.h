@@ -18,6 +18,7 @@ Purpose: Provides a class with members for communicating to mavros
 #include <mavros_msgs/CommandBool.h>
 #include <mavros_msgs/ParamSet.h>
 #include <mavros_msgs/StreamRate.h>
+#include <mavros_msgs/CommandLong.h>
 #include <sub_control_definitions.h>
 
 namespace mavcomm
@@ -37,7 +38,7 @@ class MavrosCommunicator
         mavros_msgs::SetMode _stabilizeModeMsg, _altHoldModeMsg, _acroModeMsg, _manualModeMsg;
         mavros_msgs::CommandBool _armMsg, _disarmMsg;
         mavros_msgs::ParamSet _sysidMsg;
-        mavros_msgs::StreamRate _streamRateMsg;        
+        mavros_msgs::StreamRate _streamRateMsg;
 
         //@var RC Override Message. modify channels array.
         //ex. OverrideMessage.channels[0] = ...
@@ -55,7 +56,7 @@ class MavrosCommunicator
         /**
         Sets the override message. Message layout for ardusub v3.5
         see https://www.ardusub.com/operators-manual/rc-input-and-output.html
-        
+
         @note: Bounds the provided values between LOW_PWM and HIGH_PWM
 
         @param roll - pwm value to assign to roll channel
@@ -72,7 +73,7 @@ class MavrosCommunicator
         Sets overridemessage at <idx> to <pwm>
 
         @note: Bounds the provided pwm value between LOW_PWM and HIGH_PWM
-    
+
         @param idx - index in the message
         @param pwm - pwm to set the channel to
         */
@@ -153,7 +154,7 @@ class MavrosCommunicator
         */
         bool MotorTest();
 
- 
+
     MavrosCommunicator();
 
     ~MavrosCommunicator();

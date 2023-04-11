@@ -20,4 +20,8 @@ Purpose: Provides definitions for control and communication with mavros/mavlink
 #define MID_PWM 	1500
 #define LOW_PWM 	1050
 
+#define ARM_OPEN  1900
+#define ARM_CLOSE 1050
+#define ARM_NEUTRAL 1500
+
 #endif
