@@ -50,6 +50,8 @@ class ManualController : public Controller
         int _throttle = 1;
         int _yaw = 0;
         int _arm = 2;
+        int _open_gripper = 3;
+        int _close_gripper = 2;
         int _armTimeoutSec = 60;
 
         bool _inverse_forward, _inverse_lateral, _inverse_yaw, _inverse_throttle = false;

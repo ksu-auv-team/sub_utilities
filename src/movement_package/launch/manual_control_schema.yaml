@@ -36,6 +36,8 @@
 #      - Left/Right (strafe)           Default: RLR
 #      - Yaw (AKA rotate)              Default: LLR
 #      - Elevation (AKA vertical)      Default: LUD
+#      - Gripper open                  Default: X
+#      - Gripper close                 Default: Y
 #
 #  we also require you to hold down the arm button the entire time (Note: This should be an axes or maybe make it togglable?)
 #      - Arm Default: LT (at least half way down)
@@ -47,6 +49,8 @@ manual_controls:
   strafe: "RLR"
   yaw: "LLR"
   vertical: "LUD"
+  open_gripper: "X"
+  close_gripper: "Y"
   arm_timeout_sec: 120
 
 

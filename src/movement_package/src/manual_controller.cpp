@@ -83,15 +83,19 @@ ManualController::ManualController()
          * /manual_controls/strafe: RLR
          * /manual_controls/vertical: LUD
          * /manual_controls/yaw: LLR
+         * /manual_controls/open_gripper: X
+         * /manual_controls/close_gripper: Y
         */
-        std::string forward, lateral, throttle, yaw, arm;
+        std::string forward, lateral, throttle, yaw, arm, open_gripper, close_gripper;
         _n.getParam("/manual_controls/frontback", forward);
         _n.getParam("/manual_controls/strafe", lateral);
         _n.getParam("/manual_controls/vertical", throttle);
         _n.getParam("/manual_controls/yaw", yaw);
         _n.getParam("/manual_controls/arm", arm);
+        _n.getParam("/manual_controls/open_gripper", open_gripper);
+        _n.getParam("/manual_controls/close_gripper", close_gripper);
 
-        ROS_INFO_STREAM("forward " << forward <<  " lateral " << lateral << " throttle " << throttle << " yaw " << yaw);
+        ROS_INFO_STREAM("forward " << forward <<  " lateral " << lateral << " throttle " << throttle << " yaw " << yaw << " close_gripper " << close_gripper << " open_gripper " << open_gripper);
         _inverse_forward = tolower(forward[0]) == 'i' ? true : false;
         _forward  = parseAxesControlSchema(forward, _forward);
 
@@ -103,8 +107,10 @@ ManualController::ManualController()
 
         _inverse_yaw = tolower(yaw[0]) == 'i' ? true : false;
         _yaw      = parseAxesControlSchema(yaw, _yaw);
-
         _arm      = parseAxesControlSchema(arm, _arm);
+
+        _open_gripper  = parseButtonControlSchema(open_gripper, _open_gripper);
+        _close_gripper = parseButtonControlSchema(close_gripper, _close_gripper);
     }
 
     _n.getParam("/manual_controls/arm_timeout_sec", _armTimeoutSec);
@@ -163,7 +169,7 @@ void ManualController::SafeArm()
             this->Disarm();
             _manualArmed = false;
         }
-        else if(messageTime > 60)
+        else if(messageTime > _armTimeoutSec)
         {
             this->Disarm();
             _manualArmed = false;
@@ -179,10 +185,10 @@ void ManualController::ProcessChannels()
     /*
         If either Xbox button X or Y is pressed change the second parameter to match the needed PWM value
     */
-    if (_joyMsg.buttons[2] || _joyMsg.buttons[3]) {
-        if (_joyMsg.buttons[2]) {
+    if (_joyMsg.buttons[_close_gripper] || _joyMsg.buttons[_open_gripper]) {
+        if (_joyMsg.buttons[_close_gripper]) {
             _srv.request.param2 = ARM_CLOSE;
-        } else if (_joyMsg.buttons[3]) {
+        } else if (_joyMsg.buttons[_open_gripper]) {
             _srv.request.param2 = ARM_OPEN;
         }
     } else {
