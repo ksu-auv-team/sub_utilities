@@ -4,7 +4,7 @@ from numpysocket import NumpySocket
 import imutils
 import cv2
 
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 with NumpySocket() as s:
     s.connect(("192.168.1.122", 9999))
