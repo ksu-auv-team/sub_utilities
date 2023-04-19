@@ -7,7 +7,7 @@ import cv2
 cap = cv2.VideoCapture(2)
 
 with NumpySocket() as s:
-    s.connect(("localhost", 9999))
+    s.connect(("192.168.1.122", 9999))
     while(cap.isOpened()):
         ret, frame = cap.read()
         frame_resize = imutils.resize(frame, width=320)
